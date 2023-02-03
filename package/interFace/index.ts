@@ -1,6 +1,7 @@
 export interface CMD_Model{
     cmd_headData: any,
     cmd_bodyData: any
+    originalData:number[]
 }
 export interface headDataFace{
     [key: string]:any;

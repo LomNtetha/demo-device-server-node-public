@@ -13,7 +13,7 @@ import {bodyDataFace, CMD_Model, cmdDataFace, headDataFace, locationDataFace} fr
 function protocolAnalysis(str: string) {
     let result = BytesHexStrUtil.hexStringToBytes(str, true)
     let cmdDataList: Array<any> = [];
-    let cmdModelList = analysisCMDModelList(result);// [{cmd_headData,cmd_bodyData}] 解析生成头部数据、body数据、原始数据
+    let cmdModelList = analysisCMDModelList(result,str);// [{cmd_headData,cmd_bodyData}] 解析生成头部数据、body数据、原始数据
     cmdModelList.forEach((item) => {
         let cmdData = protocolAnalysis2(item);
         cmdDataList.push(cmdData);
@@ -22,7 +22,7 @@ function protocolAnalysis(str: string) {
 }
 
 // 解析生成头部数据、body数据、原始数据
-function analysisCMDModelList(data: number[]): Array<CMD_Model> {
+function analysisCMDModelList(data: number[],str:string): Array<CMD_Model> {
     const cmdList = [];
     let read = 0;
     while (read + 8 < data.length) {// 解决连包问题，并且过滤掉两端的无效数据
@@ -44,7 +44,8 @@ function analysisCMDModelList(data: number[]): Array<CMD_Model> {
         }
         let cmd_bodyData = analysisBodyData(bodyData);// 解析得到body数据
         // let originalData = ArrayUtils.addAll(headData, bodyData);// 将截取得到的头部数据和body数据全都放入到数据中，作为原始数据
-        cmdList.push({cmd_headData, cmd_bodyData});// 生成一个包含头部数据和body数据和原始数据的对象
+        let originalData = headData.concat(bodyData);// 将截取得到的头部数据和body数据全都放入到数据中，作为原始数据
+        cmdList.push({cmd_headData, cmd_bodyData,originalData});// 生成一个包含头部数据和body数据和原始数据的对象
         read += headData.length + 8;
     }
     return cmdList;
@@ -304,7 +305,8 @@ function analysisResponseData(cmdModel: CMD_Model) {
 
 //
 function getCmdDataObject(cmdModel: CMD_Model) {
-    let {cmd_bodyData, cmd_headData} = cmdModel
+    if(!cmdModel?.cmd_bodyData &&!cmdModel?.cmd_headData&&!cmdModel?.originalData)return {}
+    let {cmd_bodyData,cmd_headData,originalData} = cmdModel
     const cmdHeadData: headDataFace = {};// 创建一个键值对的对象
     const cmdBodyData: bodyDataFace = {};// 身体键值对对象
     // @ts-ignore
@@ -317,8 +319,8 @@ function getCmdDataObject(cmdModel: CMD_Model) {
     cmdBodyData[Prot_const.CMD_Body_CmdType] = cmd_bodyData.cmdType
     cmdData[Prot_const.CMD_Head] = cmdHeadData
     cmdData[Prot_const.CMD_Body] = cmdBodyData
+    cmdData[Prot_const.CMD_Original]=BytesHexStrUtil.toHexString(originalData)// originalData
     return cmdData;
-    // cmdData[Prot_const.CMD_Original]=cmd_bodyData.
 }
 
 // 解析定位数据
@@ -732,7 +734,7 @@ function getJson_Wifi(data: number[]) {
     for (let i = 0; i + 6 < data.length;) {
         const Json_Wifi: any = {};
         let rssi = (data[i] & 0xFF);
-        let mac = ProtocolUtil.bytes2Mac(data.slice(i + 1, i + 7), true);// 这里的mac解析后有问题
+        let mac = ProtocolUtil.bytes2Mac(data.slice(i + 1, i + 7), true);
         Json_Wifi[Prot_const.Data_0x22_Signal] = rssi
         Json_Wifi[Prot_const.Data_0x22_Mac] = mac
         list.push(Json_Wifi);

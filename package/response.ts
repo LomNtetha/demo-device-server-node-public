@@ -60,61 +60,16 @@ function serviceResponse(bodyData: any) {
                 cmd_bodyData=getCommandResponse()
                 break;
             case Prot_const.Services_0x11:
-                /*cmdKey = Cmd_const.CMD_Services_getAddresses;
-                let addresses = bodyData[key];
-                // let lat_addr = Convert.toDouble(addresses[Prot_const.Services_0x11_lat], 0.0);
-                // let lng_addr = Convert.toDouble(addresses[Prot_const.Services_0x11_lng], 0.0);
-                let lat_addr =parseFloat(addresses[Prot_const.Services_0x11_lat]);
-                let lng_addr =parseFloat(addresses[Prot_const.Services_0x11_lng]);
-                cmdValue = ProtocolUtil.latlng2Bytes(lat_addr, lng_addr);
-                let address = addresses[Prot_const.Services_0x11_address];
-                if (!address) {
-                    // let addressBytes = BytesHexStrUtil.string2BytesByUTF_8(address);
-                    let addressBytes =address || [""];
-                    // addressBytes.push(addressBytes);
-                    cmdValue.concat(addressBytes);
-                }
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
             case Prot_const.Services_0x12:
-               /* cmdKey = Cmd_const.CMD_Services_getTimestamp;
-                cmdValue = [];
-                if (bodyData[key] instanceof String && !bodyData[key] === Prot_const.CMD_Value_NULL) {
-                    const dateTime = Convert.toStr(bodyData[key], ProtocolUtil.DATETIME_DEFAULT);
-                    cmdValue = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-                }
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
             case Prot_const.Services_0x13:
-              /*  cmdKey = Cmd_const.CMD_Services_getWeather;
-                let weather = bodyData[key];
-                let lang = Convert.toStr(weather[Prot_const.Services_0x13_lang], "");
-                // lang = String.format("%-8s", lang);// 8个字节不足右边补空格
-                cmdValue = BytesHexStrUtil.string2BytesByASCII(lang);
-                if (weather[Prot_const.Services_0x13_lat] != null && weather[Prot_const.Services_0x13_lng] != null) {
-                    const lat_weather = Convert.toDouble(weather[Prot_const.Services_0x13_lat], 0.0);
-                    const lng_weather = Convert.toDouble(weather[Prot_const.Services_0x13_lng], 0.0);
-                    cmdValue.concat(ProtocolUtil.latlng2Bytes(lat_weather, lng_weather));
-                }
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
             case Prot_const.Services_0x21:
-              /*  cmdKey = Cmd_const.CMD_Services_getLocationGSM;
-                let location_gsm = bodyData[key];
-                cmdValue = mapGSM2Byte(location_gsm, cmdKey);
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
             case Prot_const.Services_0x22:
-               /* cmdKey = Cmd_const.CMD_Services_getLocationWIFI;
-                let location_wifi = bodyData[key];
-                cmdValue = mapWifi2Byte(location_wifi);
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
             case Prot_const.Services_0x24:
-               /* cmdKey = Cmd_const.CMD_Services_generalData;
-                let generalData = bodyData[key];
-                cmdValue = mapStatus2Byte(generalData);
-                cmd_bodyData.setCmdData(cmdKey, cmdValue);*/
                 break;
         }
         return cmd_bodyData;

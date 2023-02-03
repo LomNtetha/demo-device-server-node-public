@@ -1,5 +1,6 @@
 const path = require("path");
 const net = require('node:net');
+const BytesHexStrUtil = require('../utils/bytesHexStr.ts')
 const logger = require('../modules/logger').logger("info");
 const {response} = require(path.join(process.cwd(), "/package/response"));
 const {protocolAnalysis} = require(path.join(process.cwd(), "/package/protocolAnalysis"));
@@ -17,9 +18,9 @@ module.exports = function createSocket() {
         socket.on('data', (dt: { toString: (arg0: string) => string; }) => {
             let str = dt.toString('hex').toUpperCase()
             let data = protocolAnalysis(str);
-            logger.info("正向解析：",JSON.stringify(data))
-            const responseVal=response(data[0].cmdHeadData,data[0].cmdBodyData)
-            logger.info("响应结果：",responseVal)
+            logger.info("正向解析：",JSON.stringify(data,null,1))
+            const responseVal=data.length&&response(data[0].cmdHeadData,data[0].cmdBodyData)
+            logger.info("响应结果：",BytesHexStrUtil.toHexString(responseVal))
             let buf=Buffer.from(responseVal||[])
             socket.write(buf, 'binary',() => {
             });

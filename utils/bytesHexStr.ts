@@ -8,25 +8,24 @@ module.exports = class {
         if (isOrder) {
             for (let i = 0; i < byteArray.length; i++) {
                 str += byteArray[i].toString(16).toLocaleUpperCase()+" "
-                // stringBuilder.append(String.format("%02X", byteArray[i])).append(" ");
             }
         } else {
             for (let i = byteArray.length - 1; i >= 0; i--) {
                 // str = `%02X${byteArray[i]} `
                 str += byteArray[i].toString(16).toLocaleUpperCase()+" "
-                // stringBuilder.append(String.format("%02X", byteArray[i])).append(" ");
             }
         }
         return str.trim();
     }
     public static toHexString(cmdData: any[]):string{
         let str = ""
+        if(!cmdData||cmdData.length<=0)return str
         cmdData.forEach((item) => {
             // @ts-ignore
             if (item === void 0 || item === null) return
             str += ('0' + item.toString(16).toLocaleUpperCase()).slice(-2) + " ";
         })
-        return str
+        return str.trim();
     }
     //
     public static bytes2StringByASCII(data: number[]) {
