@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8">
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <style>
+        .result .el-textarea__inner {
+            font-size: 18px;
+        !important;
+            color: #504f4f;
+        !important;
+            background: #eee !important;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-input type="textarea" v-model="area" :autosize="{ minRows: 6, maxRows: 16}"></el-input>
+    <p></p>
+    <el-input type="textarea" class="result" v-model="result" placeholder="解析后的结果"
+              :autosize="{ minRows: 6, maxRows: 16}"></el-input>
+    <p></p>
+<!--    :disabled="isSubscribe"-->
+    <el-button type="primary" @click.stop="Analysis" >Analysis</el-button>
+    <el-button type="success" @click.stop="subscribe" :disabled="!isSubscribe">Connection</el-button>
+</div>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.2.1/bin/jsencrypt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.4.1/dist/socket.io.min.js"></script>
+<!--<script src="./encryption.js"></script>-->
+<script>
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    axios.defaults.baseURL = 'http://127.0.0.1:80';
+    axios.defaults.headers.post['Content-Type'] = 'application/json';
+    // 添加请求拦截器
+    axios.interceptors.request.use(function (config) {
+        // 在发送请求之前做些什么
+        return config;
+    }, function (error) {
+        // 对请求错误做些什么
+        return Promise.reject(error);
+    });
+    const app = new Vue({
+        el: '#app',
+        data: {
+            result: "",
+            newsList: [],
+            activeName: '3',
+            isSubscribe: true,
+            socket: null,
+            area: "AB 10 33 00 83 2E 03 00 01 10 01 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 09 24 A6 C0 4F 63 FF 8F C2 40 16 20 C0 D8 A7 00 C0 D8 A7 00 2D 00 AF 00 5A 31 58 00 6D 0A 00 00 0B",
+        },
+        methods: {
+            Analysis() {
+
+                this.socket.send(this.area)
+              /*  this.ws.emit("send", this.area, ({data, status}) => {
+                    if (status === 'ok') {
+                        this.result = data
+                    }
+                }) */
+            },
+            subscribe() {
+                this.isSubscribe = false
+                this.socket=window.WebSocket ? new WebSocket('ws://127.0.0.1:6061') : null
+                this.socket.onopen = function () {
+                    console.log('连接服务器成功!')
+                    this.socket.send('startting...')
+                }
+                this.socket.onclose = function () {
+                    console.log('服务器关闭')
+                }
+                this.socket.onerror = function () {
+                    console.log('连接出错')
+                }
+                this.socket.onmessage = function (e) {
+                    console.log("121::",e.data)
+                    this.result=e.data
+                }
+
+                /*let val = axios({
+                    method: 'get',
+                    url: '/api/private/v1/users/subscribe',
+                })
+                val.then((res) => {
+                    let {status, msg} = res.data.meta
+                    if (status === 200) {
+                        this.isSubscribe = false
+                        this.$message({
+                            message: msg,
+                            type: 'success'
+                        });
+
+                    } else {
+                        this.$message.error('错了哦，这是一条错误消息');
+                    }
+                });*/
+             /*   const socket = io('http://127.0.0.1:6061');
+                socket.on("connect", () => {
+                    console.log(socket.id); //
+                });
+                socket.on("disconnect", () => {
+                    console.log(socket.id); //
+                });*/
+                // this.ws = socket
+            },
+        },
+        mounted() {
+        }
+    });
+</script>
+</body>
+</html>
