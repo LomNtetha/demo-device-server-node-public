@@ -59,18 +59,6 @@ function serviceResponse(bodyData: any) {
             case Prot_const.Services_0x10:
                 cmd_bodyData=getCommandResponse()
                 break;
-            case Prot_const.Services_0x11:
-                break;
-            case Prot_const.Services_0x12:
-                break;
-            case Prot_const.Services_0x13:
-                break;
-            case Prot_const.Services_0x21:
-                break;
-            case Prot_const.Services_0x22:
-                break;
-            case Prot_const.Services_0x24:
-                break;
         }
         return cmd_bodyData;
     }
