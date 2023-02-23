@@ -13,16 +13,16 @@ function reverseAnalysis(arr: Array<any>) {
     switch (cmdBodyData.cmdType) {
         case 1:
             cmd_bodyData = getCommand_data(cmdBodyData.locationData)
-            // cmd_bodyData = getCommand_response()
             break;
         case 3:
             cmd_bodyData = getCommand_service(cmdBodyData.servicesData)
             break;
+        case 4:
+            cmd_bodyData = getCommand_system(cmdBodyData.systemData)
+            break;
     }
-    // const cmdData = getByteData(getCommandHead(cmdHeadData), getByteData_body(cmd_bodyData));
-    // const cmdData = getByteData(cmdHeadData,getByteData_body(cmd_bodyData));
-    // const cmdData = getByteData(cmdHeadData,getByteData_body(cmd_bodyData));
-    const cmdData = getByteData_body(cmd_bodyData);
+    const cmdData = getByteData(cmdHeadData,getByteData_body(cmd_bodyData));
+    // const cmdData = getByteData_body(cmd_bodyData);
     let str = BytesHexStrUtil.toHexString(cmdData)
     logger.info("反向解析：", str)
     return cmdData;
@@ -246,7 +246,21 @@ function getCommand_data(bodyData: any) {
     }
     return cmd_bodyData;
 }
-
+function getCommand_system(bodyData: any) {
+    let cmd_bodyData = new CMD_DataBody();
+    cmd_bodyData.setCmdType(Cmd_const.CMD_Type_System);
+    for (let key in bodyData) {
+        let cmdValue: any[] = [];
+        let cmdKey;
+        switch (key) {
+            case Prot_const.System_0x13:
+                cmdKey = Cmd_const.CMD_Find_Me;
+                cmd_bodyData.setCmdData(cmdKey, null);
+                break;
+        }
+        return cmd_bodyData;
+    }
+}
 function getCommand_service(bodyData: any) {
     let cmd_bodyData = new CMD_DataBody();
     cmd_bodyData.setCmdType(Cmd_const.CMD_Type_Service);

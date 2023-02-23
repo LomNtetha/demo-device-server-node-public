@@ -149,6 +149,7 @@ module.exports =class Cmd_const{
      static readonly CMD_System_IMEI:number= 0x01// IMEI
      static readonly CMD_System_ReFactory:number= 0x11// refactory
      static readonly CMD_System_Reboot:number= 0x12// reboot
+     static readonly CMD_Find_Me:number= 0x13// shutdown
      static readonly CMD_System_Shutdown:number= 0x14// shutdown
      static readonly CMD_System_ScanBLE:number= 0x16// Scan BLE
      static readonly CMD_System_ScanBeacon:number= 0x19// Scan Beacon

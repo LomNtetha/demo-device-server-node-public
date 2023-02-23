@@ -427,6 +427,7 @@ module.exports = class Prot_const{
      static readonly System_0x01:string= "imei"// IMEI
      static readonly System_0x11:string= "reFactory"// ReFactory
      static readonly System_0x12:string= "reboot"// Reboot
+     static readonly System_0x13:string= "findMe"// findMe
      static readonly System_0x14:string= "shutdown"// Shutdown
      static readonly System_0x19:string= "scanBeacon"// ScanBeacon
      static readonly System_0x1A:string= "scanWifiAuto"// ScanWifiAuto

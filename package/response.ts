@@ -10,6 +10,8 @@ function response(cmdHeadData:any,cmdBodyData:any) {
             break;
         case 3:responseResult = serviceResponse(cmdBodyData.servicesData)
             break;
+        case 4:responseResult = getCommandResponse()
+            break;
     }
     const cmdData = getByteData(getCommandHead(cmdHeadData), getByteDataBody(responseResult));
     return cmdData;

@@ -141,6 +141,10 @@ function protocolAnalysis2(cmdModel: CMD_Model) {
                     const servicesData = analysisServicesData(cmdModel);
                     cmdBodyData[Prot_const.Type_0x03] = servicesData;
                     break;
+                case Cmd_const.CMD_Type_System:
+                    const  systemData = analysisSystemData(cmdModel);
+                    cmdBodyData.put(Prot_const.Type_0x04, systemData);
+                    break;
                 case Cmd_const.CMD_Type_Response:
                     let responseData = analysisResponseData(cmdModel);
                     cmdBodyData[Prot_const.Type_0x7F] = responseData
@@ -152,7 +156,30 @@ function protocolAnalysis2(cmdModel: CMD_Model) {
     }
     return null;
 }
-
+function analysisSystemData(cmdModel: CMD_Model) {
+    const systemData: any = {};
+    let cmdDataList = cmdModel.cmd_bodyData.cmdData;
+    cmdDataList.forEach((item: any) => {
+        let cmdValue = item.cmdValue;
+        switch (item.cmdKey) {
+            case Cmd_const.CMD_Find_me:
+                systemData[Prot_const.System_0x13] = null;
+                break;
+            default:
+                let other: any = {};
+                if (Prot_const.CMD_Key_Unsupported in systemData) {
+                    other = systemData[Prot_const.CMD_Key_Unsupported];
+                } else {
+                    other["msg"] = "Other keys are not supported";
+                }
+                let str = "key:0x" + item.cmdKey;
+                other[str] = `Value:${BytesHexStrUtil.bytesToHexString(cmdValue)}`;
+                systemData[Prot_const.CMD_Key_Unsupported] = other;
+                break;
+        }
+    })
+    return systemData;
+}
 function analysisServicesData(cmdModel: CMD_Model) {
     const servicesData: any = {};
     let cmdDataList = cmdModel.cmd_bodyData.cmdData;

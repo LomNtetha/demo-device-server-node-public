@@ -7,9 +7,7 @@ const resextra = require('./modules/resextra')
 const mount = require('mount-routes')
 const app = express()
 const createSocket =require(path.join(process.cwd(),"/services/socket"));
-const {testReverseAnalysis} =require(path.join(process.cwd(),"/package/test"));
 createSocket()
-// testReverseAnalysis()
 /**
  *
  * 公共系统初始化
