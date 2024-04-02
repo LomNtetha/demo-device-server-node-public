@@ -1,32 +1,878 @@
-[2023-02-23T11:51:09.221] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:09.224] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:09.224] [INFO] cheese - findeme： [
+[2024-04-02T15:44:12.797] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 314,
+   "length": 20,
+   "checkCRC": 42125,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "systemTime": "null"
+   }
+  },
+  "originalData": "AB 10 14 00 8D A4 3A 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 01 12"
+ }
+]
+[2024-04-02T15:44:12.803] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3A 01 7F 01 00
+[2024-04-02T15:44:15.983] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 0,
+   "length": 18,
+   "checkCRC": 35506,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 1,
+   "locationData": {
+    "imei": "123456789012345"
+   }
+  },
+  "originalData": "AB 10 12 00 B2 8A 00 00 01 10 01 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35"
+ }
+]
+[2024-04-02T15:44:15.984] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 00 00 7F 01 00
+[2024-04-02T15:45:13.903] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 315,
+   "length": 375,
+   "checkCRC": 14302,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 1,
+   "locationData": {
+    "imei": "888888888123456",
+    "dataList": [
+     {
+      "status": {
+       "statusCode": 973472408,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": true,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 58,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:33:13.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.3,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 990249624,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": true,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 59,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:34:01.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.3,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1040581272,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": true,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 62,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:38:28.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.5,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1057358488,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": true,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 63,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:38:59.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.5,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1057358472,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 63,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:49:13.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.2,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1040581256,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 62,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T06:59:14.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.5,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1040581256,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 62,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T07:09:15.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.7,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1023803528,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": true,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": false,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 61,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T07:19:19.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.3,
+       "height": 0
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1023803906,
+       "deviceStatus": {
+        "dataType": "WIFI",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": false,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 61,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T07:32:29.000Z"
+      },
+      "wifi": {
+       "wifiList": [
+        {
+         "signal": 206,
+         "mac": "30:23:3:DF:A3:F1"
+        },
+        {
+         "signal": 200,
+         "mac": "F0:74:8D:FA:8C:1C"
+        },
+        {
+         "signal": 195,
+         "mac": "44:32:62:6A:FA:54"
+        },
+        {
+         "signal": 193,
+         "mac": "A0:36:79:30:68:8"
+        },
+        {
+         "signal": 192,
+         "mac": "F0:74:8D:FA:83:ED"
+        }
+       ]
+      }
+     },
+     {
+      "status": {
+       "statusCode": 1007026184,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": false,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": false,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 60,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T07:42:43.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.3,
+       "height": 0
+      }
+     }
+    ]
+   }
+  },
+  "originalData": "AB 10 77 01 DE 37 3B 01 01 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 0D 24 A9 A6 0B 66 98 02 06 3A 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 03 00 00 00 0D 24 D9 A6 0B 66 98 02 06 3B 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 03 00 00 00 0D 24 E4 A7 0B 66 98 02 06 3E 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 05 00 00 00 0D 24 03 A8 0B 66 98 02 06 3F 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 05 00 00 00 0D 24 69 AA 0B 66 88 02 06 3F 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 02 00 00 00 0D 24 C2 AC 0B 66 88 02 06 3E 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 05 00 00 00 0D 24 1B AF 0B 66 88 02 06 3E 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 07 00 00 00 0D 24 77 B1 0B 66 88 00 06 3D 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 03 00 00 00 0D 24 8D B4 0B 66 02 02 06 3D 18 00 00 00 24 22 CE 30 23 03 DF A3 F1 C8 F0 74 8D FA 8C 1C C3 44 32 62 6A FA 54 C1 A0 36 79 30 68 08 C0 F0 74 8D FA 83 ED 0D 24 F3 B6 0B 66 08 00 06 3C 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 03 00 00 00"
+ }
+]
+[2024-04-02T15:45:13.903] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3B 01 7F 01 00
+[2024-04-02T15:46:14.866] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 316,
+   "length": 35,
+   "checkCRC": 48313,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026176,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": false,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:46:14.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 B9 BC 3C 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 C6 B7 0B 66 00 00 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:46:14.866] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3C 01 7F 01 00
+[2024-04-02T15:47:15.457] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 317,
+   "length": 35,
+   "checkCRC": 20170,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026176,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": false,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:47:15.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 CA 4E 3D 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 03 B8 0B 66 00 00 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:47:15.457] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3D 01 7F 01 00
+[2024-04-02T15:48:16.593] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 318,
+   "length": 35,
+   "checkCRC": 38421,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026176,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": false,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:48:16.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 15 96 3E 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 40 B8 0B 66 00 00 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:48:16.593] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3E 01 7F 01 00
+[2024-04-02T15:49:17.222] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 319,
+   "length": 35,
+   "checkCRC": 56044,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026176,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": false,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:49:17.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 EC DA 3F 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 7D B8 0B 66 00 00 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:49:17.222] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 3F 01 7F 01 00
+[2024-04-02T15:49:58.409] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 320,
+   "length": 52,
+   "checkCRC": 7425,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 1,
+   "locationData": {
+    "imei": "888888888123456",
+    "dataList": [
+     {
+      "status": {
+       "statusCode": 1007026696,
+       "deviceStatus": {
+        "dataType": "BLE",
+        "isCharging": false,
+        "isChargingComplete": false,
+        "isHistoricalData": false,
+        "isReboot": false,
+        "isAGPS": false,
+        "isMotion": true,
+        "workMode": 6,
+        "signalSize": 0,
+        "battery": 60,
+        "isHome": false,
+        "bleConnected": false,
+        "fallDownStatus": 0
+       },
+       "dateTime": "2024-04-02T07:49:57.000Z"
+      },
+      "ble2": {
+       "mac": "C2:36:A9:84:C1:5F",
+       "lat": 22.012486,
+       "lng": 114.025515,
+       "radius": 0.3,
+       "height": 0
+      }
+     }
+    ]
+   }
+  },
+  "originalData": "AB 10 34 00 01 1D 40 01 01 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 0D 24 A5 B8 0B 66 08 02 06 3C 18 00 00 00 13 26 5F C1 84 A9 36 C2 BC D6 1E 0D AE E9 F6 43 03 00 00 00"
+ }
+]
+[2024-04-02T15:49:58.409] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 40 01 7F 01 00
+[2024-04-02T15:50:59.863] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 321,
+   "length": 35,
+   "checkCRC": 14184,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:50:59.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 68 37 41 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 E3 B8 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:50:59.863] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 41 01 7F 01 00
+[2024-04-02T15:52:00.861] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 322,
+   "length": 35,
+   "checkCRC": 40287,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:52:00.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 5F 9D 42 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 20 B9 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:52:00.861] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 42 01 7F 01 00
+[2024-04-02T15:53:01.696] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 323,
+   "length": 35,
+   "checkCRC": 3302,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:53:01.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 E6 0C 43 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 5D B9 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:53:01.696] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 43 01 7F 01 00
+[2024-04-02T15:54:02.816] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 324,
+   "length": 35,
+   "checkCRC": 29516,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:54:02.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 4C 73 44 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 9A B9 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:54:02.816] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 44 01 7F 01 00
+[2024-04-02T15:55:03.834] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 325,
+   "length": 35,
+   "checkCRC": 47877,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:55:03.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 05 BB 45 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 D7 B9 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:55:03.834] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 45 01 7F 01 00
+[2024-04-02T15:56:04.667] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 326,
+   "length": 35,
+   "checkCRC": 45441,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:56:04.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 81 B1 46 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 14 BA 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:56:04.667] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 46 01 7F 01 00
+[2024-04-02T15:57:05.836] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 327,
+   "length": 35,
+   "checkCRC": 25184,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:57:05.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 60 62 47 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 51 BA 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:57:05.836] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 47 01 7F 01 00
+[2024-04-02T15:58:06.819] [INFO] cheese - 正向解析： [
+ {
+  "cmdHeadData": {
+   "sequenceId": 328,
+   "length": 35,
+   "checkCRC": 12594,
+   "version": 0,
+   "flagACK": true
+  },
+  "cmdBodyData": {
+   "cmdType": 3,
+   "servicesData": {
+    "imei": "888888888123456",
+    "heartBeat": 90,
+    "status": {
+     "statusCode": 1007026688,
+     "deviceStatus": {
+      "isCharging": false,
+      "isChargingComplete": false,
+      "isHistoricalData": false,
+      "isReboot": false,
+      "isAGPS": false,
+      "isMotion": true,
+      "workMode": 6,
+      "signalSize": 0,
+      "battery": 60,
+      "isHome": false,
+      "bleConnected": false,
+      "fallDownStatus": 0
+     },
+     "dateTime": "2024-04-02T07:58:06.000Z"
+    }
+   }
+  },
+  "originalData": "AB 10 23 00 32 31 48 01 03 10 01 38 38 38 38 38 38 38 38 38 31 32 33 34 35 36 02 10 5A 0D 24 8E BA 0B 66 00 02 06 3C 18 00 00 00"
+ }
+]
+[2024-04-02T15:58:06.819] [INFO] cheese - 响应结果： AB 00 03 00 08 C7 48 01 7F 01 00
+[2024-04-02T16:06:16.813] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
+[2024-04-02T16:06:16.818] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
+[2024-04-02T16:06:16.818] [INFO] cheese - findeme： [
   171, 16, 3, 0, 163,
   205,  1, 0, 4,   1,
    19
 ]
-[2023-02-23T11:51:09.225] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>
-[2023-02-23T11:51:09.550] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:09.550] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:09.550] [INFO] cheese - findeme： [
+[2024-04-02T16:06:16.819] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>
+[2024-04-02T16:06:20.451] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
+[2024-04-02T16:06:20.452] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
+[2024-04-02T16:06:20.452] [INFO] cheese - findeme： [
   171, 16, 3, 0, 163,
   205,  1, 0, 4,   1,
    19
 ]
-[2023-02-23T11:51:09.551] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>
-[2023-02-23T11:51:12.482] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:12.482] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:12.483] [INFO] cheese - findeme： [
-  171, 16, 3, 0, 163,
-  205,  1, 0, 4,   1,
-   19
-]
-[2023-02-23T11:51:12.483] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>
-[2023-02-23T11:51:12.871] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:12.871] [INFO] cheese - 反向解析： AB 10 03 00 A3 CD 01 00 04 01 13
-[2023-02-23T11:51:12.871] [INFO] cheese - findeme： [
-  171, 16, 3, 0, 163,
-  205,  1, 0, 4,   1,
-   19
-]
-[2023-02-23T11:51:12.872] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>
+[2024-04-02T16:06:20.452] [INFO] cheese - findemeBuffer： <Buffer ab 10 03 00 a3 cd 01 00 04 01 13>

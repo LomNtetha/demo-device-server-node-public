@@ -17,22 +17,23 @@ module.exports = function createSocket() {
         });
         //8.获取客户端传入过来的数据：socket对象的data事件可以获取客户端发送过来的数据，socket对象除了有data事件外，还有connect、end、error、timeout等事件，如：
         socket.on('data', (dt: { toString: (arg0: string) => string; }) => {
-           /* let str = dt.toString('hex').toUpperCase()
-            let data = protocolAnalysis(str);
-            logger.info("正向解析：",JSON.stringify(data,null,1))
-            const responseVal=data.length&&response(data[0].cmdHeadData,data[0].cmdBodyData)
-            logger.info("响应结果：",BytesHexStrUtil.toHexString(responseVal))
-            let buf=Buffer.from(responseVal||[])
-            socket.write(buf, 'binary',() => {
-            });*/
+            //For forward parsing, the AB command is converted to JSON format
+            // let str = dt.toString('hex').toUpperCase()
+            // let data = protocolAnalysis(str);
+            // logger.info("正向解析：",JSON.stringify(data,null,1))
+            // const responseVal=data.length&&response(data[0].cmdHeadData,data[0].cmdBodyData)
+            // logger.info("响应结果：",BytesHexStrUtil.toHexString(responseVal))
+            // let buf=Buffer.from(responseVal||[])
+            // socket.write(buf, 'binary',() => {
+            // });
             //Send the findme command to all devices in two minutes
             setTimeout(()=>{
-                let buf=Buffer.from( findMeDemo()||[])
+                let buf=Buffer.from(findMeDemo()||[])
                 logger.info("findeme：", findMeDemo())
                 logger.info("findemeBuffer：",buf)
                 socket.write(buf, 'binary',() => {
                 });
-            },1*60*1000)
+            },60*60*1000)
         })
     })
     server.listen(5555, '0.0.0.0', () => {
