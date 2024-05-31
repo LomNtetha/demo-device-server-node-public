@@ -36,7 +36,9 @@ function getCommandHead(cmdHeadData: any) {
 function getByteDataBody(cmd_bodyData: any) {
     let cmd_bodyByte: any[] = [];
     const cmdType = cmd_bodyData[Prot_const.CMD_Body_CmdType];
-    cmdType && cmd_bodyByte.push(cmdType);
+    if(cmdType!==null){
+        cmd_bodyByte.push(cmdType);
+    }
     const cmdList = cmd_bodyData["cmdData"];
     cmdList.forEach((cmd: any) => {
         const cmdLength = cmd["cmdLength"];

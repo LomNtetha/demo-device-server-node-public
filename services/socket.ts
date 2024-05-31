@@ -1,10 +1,10 @@
 const path = require("path");
 const net = require('node:net');
-const BytesHexStrUtil = require('../utils/bytesHexStr.ts')
+const BytesHexStrUtil = require('../utils/bytesHexStr.ts');
 const logger = require('../modules/logger').logger("info");
 const {response} = require(path.join(process.cwd(), "/package/response"));
 const {protocolAnalysis} = require(path.join(process.cwd(), "/package/protocolAnalysis"));
-const {findMeDemo} =require(path.join(process.cwd(),"/package/demo"));
+const {findMeDemo} =require(path.join(process.cwd(),"/demos/findeMeDemo"));
 // const {reverseAnalysis} = require(path.join(process.cwd(), "/package/reverseAnalysis"));
 //协议解析API
 module.exports = function createSocket() {
@@ -26,17 +26,22 @@ module.exports = function createSocket() {
             // let buf=Buffer.from(responseVal||[])
             // socket.write(buf, 'binary',() => {
             // });
+            let findmeBuf=Buffer.from(findMeDemo()||[])
+            logger.info("findeme：", findMeDemo())
+            logger.info("findemeBuffer：",findmeBuf)
+            socket.write(findmeBuf, 'binary',() => {
+            });
             //Send the findme command to all devices in two minutes
-            setTimeout(()=>{
-                let buf=Buffer.from(findMeDemo()||[])
-                logger.info("findeme：", findMeDemo())
-                logger.info("findemeBuffer：",buf)
-                socket.write(buf, 'binary',() => {
-                });
-            },60*60*1000)
+            // setTimeout(()=>{
+            //     let buf=Buffer.from(findMeDemo()||[])
+            //     logger.info("findeme：", findMeDemo())
+            //     logger.info("findemeBuffer：",buf)
+            //     socket.write(buf, 'binary',() => {
+            //     });
+            // },60)
         })
     })
-    server.listen(5555, '0.0.0.0', () => {
+    server.listen(6060, '0.0.0.0', () => {
         console.log('serve is running...')
     })
 //connection：新的链接接入时触发，如：
