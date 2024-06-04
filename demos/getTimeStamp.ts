@@ -1,24 +1,31 @@
 import path from "path";
-const {reverseAnalysis} = require(path.join(process.cwd(), "/package/reverseAnalysis"));
-function getTimeStamp(){
-    let val= [
-        {
-            "cmdHeadData":{
-                "flagACK":true,
-                "checkCRC":19262,
-                "length":18,
-                "sequenceId":4,
-                "version":0
-            },
-            "cmdBodyData":{
-                "locationData":{
-                    "imei":"123456789012349"
+const BytesHexStrUtil = require('../utils/bytesHexStr.ts')
+const logger = require('../modules/logger').logger("info");
+const {reverseAnalysis,getBodyLength} = require(path.join(process.cwd(), "/package/reverseAnalysis"));
+const {protocolAnalysis} = require(path.join(process.cwd(), "/package/protocolAnalysis"));
+function getTimeStamp(hexStr:string){
+    let analysisVal=protocolAnalysis(hexStr)[0]// Forward resolution sends instructions to the server
+    logger.info("Forward analysis：", analysisVal)
+    let systemTime=analysisVal?.cmdBodyData?.servicesData?.systemTime
+    if(analysisVal?.cmdBodyData.cmdType==3&&systemTime=="null"){
+        let data= [
+            {
+                cmdHeadData:{
+                    flagACK:false,
+                    sequenceId:analysisVal.cmdHeadData?.sequenceId||0,// Gets the sequenceId from which the instruction was sent
+                    version:0
                 },
-                "cmdType":1
-            },
-            "originalData":"AB 10 12 00 3E 4B 04 00 01 10 01 31 32 33 34 35 36 37 38 39 30 31 32 33 34 39"
-        }
-    ]
-   return  reverseAnalysis(val)
+                cmdBodyData:{
+                    servicesData:{
+                        systemTime:new Date().toISOString() //Convert to zero time zone
+                    },
+                    cmdType:3
+                }
+            }
+        ]
+        let result=reverseAnalysis(data)// reverseAnalysis is invoked to convert the JSON data format into AB instructions
+        logger.info("TimeStamp：", result)
+        return result
+    }
 }
 export {getTimeStamp}

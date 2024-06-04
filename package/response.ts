@@ -6,11 +6,14 @@ function response(cmdHeadData:any,cmdBodyData:any) {
     if (!cmdHeadData || !cmdBodyData) return [];
     let responseResult = null;
     switch (cmdBodyData.cmdType) {
-        case 1:responseResult = getCommandResponse()
+        case 1:
+            responseResult = getCommandResponse()
             break;
-        case 3:responseResult = serviceResponse(cmdBodyData.servicesData)
+        case 3:
+            responseResult = serviceResponse(cmdBodyData.servicesData)
             break;
-        case 4:responseResult = getCommandResponse()
+        case 4:
+            responseResult = getCommandResponse()
             break;
     }
     const cmdData = getByteData(getCommandHead(cmdHeadData), getByteDataBody(responseResult));
@@ -61,6 +64,9 @@ function serviceResponse(bodyData: any) {
                 cmd_bodyData=getCommandResponse()
                 break;
             case Prot_const.Services_0x10:
+                cmd_bodyData=getCommandResponse()
+                break;
+            case Prot_const.Services_0x12:
                 cmd_bodyData=getCommandResponse()
                 break;
         }

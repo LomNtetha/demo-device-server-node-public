@@ -9,7 +9,7 @@ const BytesHexStrUtil = require('../utils/bytesHexStr.ts')
 function reverseAnalysis(arr: Array<any>) {
     if (!arr || arr.length <= 0) return;
     let [{cmdHeadData, cmdBodyData}] = arr
-    let cmd_bodyData = null;
+    let cmd_bodyData = [];
     switch (cmdBodyData.cmdType) {
         case 1:
             cmd_bodyData = getCommand_data(cmdBodyData.locationData)
@@ -666,7 +666,7 @@ function getByteData(cmd_head: any, bodyData: any) {
 }
 
 function getByteData_body(cmd_bodyData: any) {
-    let cmd_bodyByte: any[] = [];
+    let cmd_bodyByte: number[] = [];
     const cmdType = cmd_bodyData[Prot_const.CMD_Body_CmdType];
     cmdType && cmd_bodyByte.push(cmdType);
     const cmdList = cmd_bodyData["cmdData"];
@@ -680,7 +680,6 @@ function getByteData_body(cmd_bodyData: any) {
     })
     return cmd_bodyByte;
 }
-
 export {reverseAnalysis}
 
 

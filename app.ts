@@ -6,8 +6,8 @@ const resextra = require('./modules/resextra')
 // 路由加载
 const mount = require('mount-routes')
 const app = express()
-const createSocket =require(path.join(process.cwd(),"/services/socket"));
-createSocket()
+const createSocket =require(path.join(process.cwd(),"/services/socket"))
+createSocket();
 /**
  *
  * 公共系统初始化
