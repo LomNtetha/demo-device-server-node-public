@@ -11,6 +11,9 @@ import {bodyDataFace, CMD_Model, cmdDataFace, headDataFace, locationDataFace} fr
 
 // 解析协议
 function protocolAnalysis(str: string) {
+    if(!str||str.length<=0){
+        throw ('请传入十六进制数')
+    }
     let result = BytesHexStrUtil.hexStringToBytes(str, true)
     let cmdDataList: Array<any> = [];
     let cmdModelList = analysisCMDModelList(result,str);// [{cmd_headData,cmd_bodyData}] 解析生成头部数据、body数据、原始数据
