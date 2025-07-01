@@ -4,7 +4,7 @@ interface propertiesFace {
     flag_ERR: boolean;
     encryption: number;
 }
-const Properties = require('./CMD_Properties')
+const Properties = require('./CMD_properties')
 module.exports = class CMD_DataHead {
     private header?: number;
     private length?: number;

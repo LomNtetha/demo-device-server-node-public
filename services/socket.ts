@@ -8,16 +8,17 @@ const {protocolAnalysis} = require(path.join(process.cwd(), "/package/protocolAn
 const {findMeDemo} =require(path.join(process.cwd(),"/demos/findeMeDemo"));
 const {getTimeStamp} =require(path.join(process.cwd(),"/demos/getTimeStamp"));
 // const {reverseAnalysis} = require(path.join(process.cwd(), "/package/reverseAnalysis"));
-//协议解析API
+// Protocol parsing API
 module.exports = function createSocket() {
     const server = net.createServer((socket:any) => {
-        //6.设置客户端与服务端最大链接数量：
+        // 6. Set the maximum number of connections between client and server:
         server.maxConnections = 5000;
-        //7.获取客户度接入的数量：
+        // 7. Get the number of client connections:
         server.getConnections(function (err:any, count:number) {
-            console.log("当前连接的客户端数量：" + count);
+            console.log("Current number of connected clients: " + count);
         });
-        //8.获取客户端传入过来的数据：socket对象的data事件可以获取客户端发送过来的数据，socket对象除了有data事件外，还有connect、end、error、timeout等事件，如：
+        // 8. Get data sent from the client: the 'data' event of the socket object can receive data from the client.
+        // In addition to the 'data' event, the socket object also has 'connect', 'end', 'error', 'timeout', etc. events, such as:
         socket.on('data', (dt: { toString: (arg0: string) => string; }) => {
             let str = dt.toString('hex').toUpperCase()
             if(!str)return;
@@ -28,7 +29,7 @@ module.exports = function createSocket() {
             socket.write(buf,() => {
                 // console.log("dddddd::",)
             });
-            //Send the findme command to all devices in two minutes
+            // Send the findme command to all devices in two minutes
             setTimeout(()=>{
                 let findeMeVal=findMeDemo(str)
                 let buf=Buffer.from( findeMeVal||[])
@@ -41,19 +42,18 @@ module.exports = function createSocket() {
     server.listen(5555, '0.0.0.0', () => {
         console.log('serve is running...')
     })
-//connection：新的链接接入时触发，如：
+    // connection: triggered when a new connection is established, such as:
     server.on('connection', (str:string) => {
         console.log("47::",str)
-        console.log('新的接入')
+        console.log('New connection established')
     })
-//close：服务器关闭时触发，如：
+    // close: triggered when the server is closed, such as:
     server.on('close', () => {
-        console.log('服务器关闭了')
+        console.log('Server has been closed')
     })
-//error：服务器发生错误时触发，如：
+    // error: triggered when a server error occurs, such as:
     server.on('error', () => {
-        console.log('服务器错误')
+        console.log('Server error occurred')
     })
     return server;
 }
-

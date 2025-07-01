@@ -14,7 +14,7 @@ module.exports = class {
     }
 
     static bytes2DateTime(data: any[]): Date {
-        // 支持负数，小于1970年
+        // Supports negative numbers, earlier than 1970
         let dateTime = this.bytes2Long(data.slice(0, 4), true);
         return new Date(dateTime * 1000);
     }
@@ -78,7 +78,7 @@ module.exports = class {
     }
 
     static latlngToBytes(data: number) {
-        // dobule转long精度丢失
+        // Precision loss when converting double to long
         const d1 = new Decimal(data);
         const d2 = new Decimal(10000000);
         const latlng = d1.mul(d2);

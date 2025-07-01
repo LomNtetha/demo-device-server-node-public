@@ -9,14 +9,14 @@ const BytesHexStrUtil = require('../utils/bytesHexStr.ts')
 const logger = require('../modules/logger').logger("info")
 import {bodyDataFace, CMD_Model, cmdDataFace, headDataFace, locationDataFace} from "./interFace/index"
 
-// 解析协议
+// Parse protocol
 function protocolAnalysis(str: string) {
     if(!str||str.length<=0){
-        throw ('请传入十六进制数')
+        throw ('Please input hexadecimal string')
     }
     let result = BytesHexStrUtil.hexStringToBytes(str, true)
     let cmdDataList: Array<any> = [];
-    let cmdModelList = analysisCMDModelList(result,str);// [{cmd_headData,cmd_bodyData}] 解析生成头部数据、body数据、原始数据
+    let cmdModelList = analysisCMDModelList(result,str);// [{cmd_headData,cmd_bodyData}] Parse to generate header data, body data, original data
     cmdModelList.forEach((item) => {
         let cmdData = protocolAnalysis2(item);
         cmdDataList.push(cmdData);
@@ -24,42 +24,42 @@ function protocolAnalysis(str: string) {
     return cmdDataList;
 }
 
-// 解析生成头部数据、body数据、原始数据
+// Parse to generate header data, body data, original data
 function analysisCMDModelList(data: number[],str:string): Array<CMD_Model> {
     const cmdList = [];
     let read = 0;
-    while (read + 8 < data.length) {// 解决连包问题，并且过滤掉两端的无效数据
-        if ((data[read] & 0xFF) != Cmd_const.CMD_Head) {// 不等于0xAB
+    while (read + 8 < data.length) {// Solve packet concatenation issue and filter invalid data at both ends
+        if ((data[read] & 0xFF) != Cmd_const.CMD_Head) {// Not equal to 0xAB
             read++;
             continue;
         }
-        let headData = data.slice(read, read + 8);// 截取数组data，read位置到read+8的数据// 0=headData<8
-        let cmd_headData = analysisHeadData(headData);// 再解析得到该数据中的数据
+        let headData = data.slice(read, read + 8);// Slice array data from read position to read+8 // 0=headData<8
+        let cmd_headData = analysisHeadData(headData);// Further parse to get data within this data
         if (data.length < read + cmd_headData.length + 8) {
             read++;
             continue;
         }
         let bodyData = data.slice(read + 8, read + cmd_headData.length + 8);
-        let checkCRC = CheckCRC.crc16_bit(bodyData);// 校验body数据
+        let checkCRC = CheckCRC.crc16_bit(bodyData);// Verify body data
         if (cmd_headData.checkCRC != checkCRC) {
             read++;
             continue;
         }
-        let cmd_bodyData = analysisBodyData(bodyData);// 解析得到body数据
-        // let originalData = ArrayUtils.addAll(headData, bodyData);// 将截取得到的头部数据和body数据全都放入到数据中，作为原始数据
-        let originalData = headData.concat(bodyData);// 将截取得到的头部数据和body数据全都放入到数据中，作为原始数据
-        cmdList.push({cmd_headData, cmd_bodyData,originalData});// 生成一个包含头部数据和body数据和原始数据的对象
+        let cmd_bodyData = analysisBodyData(bodyData);// Parse to get body data
+        // let originalData = ArrayUtils.addAll(headData, bodyData);// Put all sliced header data and body data into the data as original data
+        let originalData = headData.concat(bodyData);// Put all sliced header data and body data into the data as original data
+        cmdList.push({cmd_headData, cmd_bodyData,originalData});// Generate an object containing header data, body data and original data
         read += headData.length + 8;
     }
     return cmdList;
 }
 
-// 解析头部数据
+// Parse header data
 function analysisHeadData(headData: number[]) {
     const cmd_headData = new CMD_DataHead();
     const header = (headData[0] & 0xFF);
     const property = (headData[1] & 0xFF);
-    const length = (headData[2] & 0xFF) | (headData[3] & 0xFF) << 8;// 2个字节,低8位在前,高8位在后.
+    const length = (headData[2] & 0xFF) | (headData[3] & 0xFF) << 8;// 2 bytes, low 8 bits first, high 8 bits last.
     const checkCRC = (headData[4] & 0xFF) | (headData[5] & 0xFF) << 8;
     const sequenceId = (headData[6] & 0xFF) | (headData[7] & 0xFF) << 8;
     const properties = analysisHeadProperties(property);
@@ -77,7 +77,7 @@ function analysisHeadData(headData: number[]) {
     return cmd_headData;
 }
 
-// 解析body
+// Parse body
 function analysisBodyData(bodyData: number[]) {
     let cmd_bodyData = new CMD_DataBody()
     let cmdType = bodyData[0] & 0xFF;
@@ -87,7 +87,7 @@ function analysisBodyData(bodyData: number[]) {
         let cmdLength = bodyData[readData] & 0xFF;
         let cmdKey = bodyData[readData + 1] & 0xFF;
         let cmdValue: number[] = [];
-        if (cmdLength == 0) {// 第一包（升级部分）长度可以为0,否则返回错误。
+        if (cmdLength == 0) {// First packet (upgrade part) length can be 0, otherwise return error.
             if (cmd_bodyData?.cmdData.length > 0) {
                 let cmdValue2 = bodyData.slice(readData, bodyData.length)
                 cmd_bodyData.setErrorMsg(BytesHexStrUtil.bytesToHexString(cmdValue2));
@@ -97,12 +97,12 @@ function analysisBodyData(bodyData: number[]) {
             cmd_bodyData.setCmdData(cmdKey, cmdValue)
             break;
         }
-        if (readData + 1 + cmdLength > bodyData.length) {//错误中断解析并提示
+        if (readData + 1 + cmdLength > bodyData.length) {//Error interrupts parsing and prompts
             let cmdValue2 = bodyData.slice(readData, bodyData.length)
             cmd_bodyData.setErrorMsg(BytesHexStrUtil.bytesToHexString(cmdValue2));
             break;
         }
-        if (readData + 2 < bodyData.length) {// value可以为空
+        if (readData + 2 < bodyData.length) {// value can be empty
             cmdValue = bodyData.slice(readData + 2, readData + 1 + cmdLength)
         }
         readData += cmdLength + 1;
@@ -111,12 +111,12 @@ function analysisBodyData(bodyData: number[]) {
     return cmd_bodyData;
 }
 
-// 解析头部属性
+// Parse header properties
 function analysisHeadProperties(properties: number) {
-    let version = ProtocolUtil.getBit(properties, 0, 4)// 版本
+    let version = ProtocolUtil.getBit(properties, 0, 4)// Version
     let flag_ACK = ProtocolUtil.getBit(properties, 4, 5)//
     let flag_ERR = ProtocolUtil.getBit(properties, 5, 6)//
-    let encryption = ProtocolUtil.getBit(properties, 6, 8)// 加密
+    let encryption = ProtocolUtil.getBit(properties, 6, 8)// Encryption
     let propertiesObj = new Properties()
     propertiesObj.setVersion(version)
     propertiesObj.setFlag_ACK(flag_ACK)
@@ -125,7 +125,7 @@ function analysisHeadProperties(properties: number) {
     return propertiesObj;
 }
 
-// 解析协议2
+// Parse protocol 2
 function protocolAnalysis2(cmdModel: CMD_Model) {
     try {
         let cmdData = getCmdDataObject(cmdModel);
@@ -193,7 +193,7 @@ function analysisServicesData(cmdModel: CMD_Model) {
                 let imei = BytesHexStrUtil.bytes2StringByASCII(cmdValue);
                 servicesData[Prot_const.Services_0x01] = imei;
                 break;
-            // 心跳包
+            // Heartbeat packet
             case Cmd_const.CMD_Services_HeartBeat:
                 let heartBeat = null;
                 if (cmdValue.length > 0) {
@@ -201,8 +201,8 @@ function analysisServicesData(cmdModel: CMD_Model) {
                 }
                 servicesData[Prot_const.Services_0x10] = heartBeat;
                 break;
-            // 返回地址
-            case Cmd_const.CMD_Services_getAddresses:// address未解析
+            // Return address
+            case Cmd_const.CMD_Services_getAddresses:// address not parsed
                 let lat = ProtocolUtil.bytes2Latlng(cmdValue.slice(0, 4));
                 let lng = ProtocolUtil.bytes2Latlng(cmdValue.slice(4, 8));
                 const ev07b_addresses: any = {};
@@ -214,7 +214,7 @@ function analysisServicesData(cmdModel: CMD_Model) {
                 }
                 servicesData[Prot_const.Services_0x11] = ev07b_addresses;
                 break;
-            // 返回系统时间(UTC)
+            // Return system time (UTC)
             case Cmd_const.CMD_Services_getTimestamp:
                 if (cmdValue.length > 0) {
                     let dateTime = ProtocolUtil.bytes2DateTime(cmdValue.slice(0, 4));
@@ -223,12 +223,12 @@ function analysisServicesData(cmdModel: CMD_Model) {
                     servicesData[Prot_const.Services_0x12] = Prot_const.CMD_Value_NULL;
                 }
                 break;
-            // 天气预报
+            // Weather forecast
             case Cmd_const.CMD_Services_getWeather:
                 const weather: any = {};
                 const langBytes = cmdValue.slice(0, 8);
                 let lang = BytesHexStrUtil.bytes2StringByASCII(langBytes);
-                weather["lang"] = lang.replaceAll(" ", "");//去掉多余的空格
+                weather["lang"] = lang.replaceAll(" ", "");//Remove extra spaces
                 if (cmdValue.length > 8) {
                     let lat_weather = ProtocolUtil.bytes2Latlng(cmdValue.slice(8, 12));
                     let lng_weather = ProtocolUtil.bytes2Latlng(cmdValue.slice(12, 16));
@@ -237,17 +237,17 @@ function analysisServicesData(cmdModel: CMD_Model) {
                 }
                 servicesData[Prot_const.Services_0x13] = weather;
                 break;
-            // 基站定位
+            // Cell tower positioning
             case Cmd_const.CMD_Services_getLocationGSM:
                 const ev07b_gsm = data2Model_GSM(cmdValue, Cmd_const.CMD_Services_getLocationGSM);
                 servicesData[Prot_const.Services_0x21] = ev07b_gsm
                 break;
-            // WIFI定位
+            // WIFI positioning
             case Cmd_const.CMD_Services_getLocationWIFI:
                 const ev07b_wifi = data2Model_Wifi(cmdValue, Cmd_const.CMD_Services_getLocationWIFI);
                 servicesData[Prot_const.Services_0x22] = ev07b_wifi;
                 break;
-            // 状态信息
+            // Status information
             case Cmd_const.CMD_Services_generalData://
                 const ev07b_status = data2Model_Status(cmdValue);
                 servicesData[Prot_const.Services_0x24] = ev07b_status;
@@ -337,8 +337,8 @@ function analysisResponseData(cmdModel: CMD_Model) {
 function getCmdDataObject(cmdModel: CMD_Model) {
     if(!cmdModel?.cmd_bodyData &&!cmdModel?.cmd_headData&&!cmdModel?.originalData)return {}
     let {cmd_bodyData,cmd_headData,originalData} = cmdModel
-    const cmdHeadData: headDataFace = {};// 创建一个键值对的对象
-    const cmdBodyData: bodyDataFace = {};// 身体键值对对象
+    const cmdHeadData: headDataFace = {};// Create a key-value pair object
+    const cmdBodyData: bodyDataFace = {};// Body key-value pair object
     // @ts-ignore
     const cmdData: cmdDataFace = {}
     cmdHeadData[Prot_const.CMD_Head_SequenceId] = cmd_headData.sequenceId
@@ -353,7 +353,7 @@ function getCmdDataObject(cmdModel: CMD_Model) {
     return cmdData;
 }
 
-// 解析定位数据
+// Parse location data
 function analysisLocationData(cmd_Model: CMD_Model) {
     let data: any = {};
     let dataList: Array<any> = [];
@@ -379,84 +379,84 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 break;
             case Cmd_const.CMD_Data_GPS:
                 let ev07b_gps = data2Model_GPS(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x20] = ev07b_gps;
                 break;
             case Cmd_const.CMD_Data_GSM:
                 let ev07b_gsm = data2Model_GSM(cmdValue, Cmd_const.CMD_Data_GSM);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x21] = ev07b_gsm;
                 break;
             case Cmd_const.CMD_Data_GSM2:
                 let ev07b_gsm2 = data2Model_GSM(cmdValue, Cmd_const.CMD_Data_GSM2);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x29] = ev07b_gsm2;
                 break;
             case Cmd_const.CMD_Data_GSM3:
                 let ev07b_gsm3 = data2Model_GSM(cmdValue, Cmd_const.CMD_Data_GSM3);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x2B] = ev07b_gsm3;
                 break;
-            case Cmd_const.CMD_Data_WIFI:// mac解析有问题
+            case Cmd_const.CMD_Data_WIFI:// mac parsing issue
                 let ev07b_wifi = data2Model_Wifi(cmdValue, Cmd_const.CMD_Data_WIFI);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x22] = ev07b_wifi;
                 break;
-            case Cmd_const.CMD_Data_WIFI2:// mac解析有问题
+            case Cmd_const.CMD_Data_WIFI2:// mac parsing issue
                 let ev07b_wifi2 = data2Model_Wifi(cmdValue, Cmd_const.CMD_Data_WIFI2);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x19] = ev07b_wifi2;
                 break;
-            case Cmd_const.CMD_Data_BLE:// 解析后缺少describe。mac解析有问题
+            case Cmd_const.CMD_Data_BLE:// Missing describe after parsing. mac parsing issue
                 let ev07b_ble = data2Model_BLE(cmdValue);
                 if (ev07b_ble != null) {
-                    data = dataList[dataList.length - 1];//取列表最后一条数据
+                    data = dataList[dataList.length - 1];//Get the last data in the list
                     data[Prot_const.Data_0x23] = ev07b_ble;
                 }
                 break;
-            case Cmd_const.CMD_Data_BLE2:// mac解析有问题
+            case Cmd_const.CMD_Data_BLE2:// mac parsing issue
                 let ev07b_ble2 = data2Model_BLE2(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x26] = ev07b_ble2;
                 break;
             case Cmd_const.CMD_Data_Smart:
                 let ev07b_smart = data2Model_Smart(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x27] = ev07b_smart;
                 break;
-            case Cmd_const.CMD_Data_Beacon:// 解析缺少describe
+            case Cmd_const.CMD_Data_Beacon:// Missing describe after parsing
                 let ev07b_beacon = data2Model_Beacon(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 if (!data[Prot_const.Data_0x28]) {
                     let ev07b_beacon_list = [];
                     ev07b_beacon_list.push(ev07b_beacon);
                     data[Prot_const.Data_0x28] = ev07b_beacon_list
-                } else {// 支持多个key累加一起（修改时间：2021-09-18）
+                } else {// Support multiple keys accumulated together (modified on: 2021-09-18)
                     data[Prot_const.Data_0x28] = ev07b_beacon
                     // ((List<Object>)data.get(Prot_const.Data_0x28)).add(ev07b_beacon);
                 }
                 break;
-            case Cmd_const.CMD_Data_Beacon2:// 解析缺少isLanLng temperature describe isDescribe。mac解析有误
+            case Cmd_const.CMD_Data_Beacon2:// Missing isLanLng temperature describe isDescribe after parsing. mac parsing error
                 let ev07b_beacon2 = data2Model_Beacon2(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 if (!data[Prot_const.Data_0x2C]) {
                     let ev07b_beacon_list = [];
                     ev07b_beacon_list.push(ev07b_beacon2);
                     data[Prot_const.Data_0x2C] = ev07b_beacon_list
-                } else {// 支持多个key累加一起（修改时间：2021-09-18）
+                } else {// Support multiple keys accumulated together (modified on: 2021-09-18)
                     data[Prot_const.Data_0x2C] = ev07b_beacon2
                     // ((List<Object>)data.get(Prot_const.Data_0x2C)).add(ev07b_beacon2);
                 }
                 break;
-            case Cmd_const.CMD_Data_HomeWifi:// 解析缺少isLanLng describe isDescribe。mac解析有误
+            case Cmd_const.CMD_Data_HomeWifi:// Missing isLanLng describe isDescribe after parsing. mac parsing error
                 let ev07b_homeWifi = data2Model_HomeWifi(cmdValue);
-                data = dataList[dataList.length - 1];//取列表最后一条数据
+                data = dataList[dataList.length - 1];//Get the last data in the list
                 // data.put(Protocol_CONST.Data_0x2A + ev07b_homeWifi.get(Protocol_CONST.Data_index), ev07b_homeWifi);
                 if (!data[Prot_const.Data_0x2A]) {
                     let ev07b_homeWifi_list = [];
                     ev07b_homeWifi_list.push(ev07b_homeWifi);
                     data[Prot_const.Data_0x2A] = ev07b_homeWifi_list
-                } else {// 支持多个key累加一起（修改时间：2021-09-18）
+                } else {// Support multiple keys accumulated together (modified on: 2021-09-18)
                     data[Prot_const.Data_0x2A].concat(ev07b_homeWifi)
                 }
                 break;
@@ -475,7 +475,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                     let alarmExtendStatus = getAlarmStatusExtend(alarmFlagExtend);
                     map_alarm[Prot_const.Data_0x02_AlarmStatusExtend] = alarmExtendStatus;
                 }
-                // data = dataList[dataList.length - 1];//取列表最后一条数据
+                // data = dataList[dataList.length - 1];//Get the last data in the list
                 data[Prot_const.Data_0x02] = map_alarm;
                 break;
             case Cmd_const.CMD_Data_SingleLocating:
@@ -504,7 +504,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 const ev07b_step_list = data2Model_Step(cmdValue);
                 if (!locationData[Prot_const.Data_0x30]) {
                     locationData[Prot_const.Data_0x30] = ev07b_step_list;
-                } else {// 支持多个key累加一起（修改时间：2021-06-24）
+                } else {// Support multiple keys accumulated together (modified on: 2021-06-24)
                     locationData[Prot_const.Data_0x30] = ev07b_step_list
                     // ((List<Object>)locationData.get(Prot_const.Data_0x30)).addAll(ev07b_step_list);
                 }
@@ -514,7 +514,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 if (!locationData[Prot_const.Data_0x31]) {
                     locationData[Prot_const.Data_0x31] = ev07b_active_list;
                     // locationData.put(Prot_const.Data_0x31, ev07b_active_list);
-                } else {// 支持多个key累加一起（修改时间：2021-06-24）
+                } else {// Support multiple keys accumulated together (modified on: 2021-06-24)
                     locationData[Prot_const.Data_0x31].concat(ev07b_active_list)
                     // ((List<Object>)locationData.get(Prot_const.Data_0x31)).addAll(ev07b_active_list);
                 }
@@ -523,7 +523,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 let ev07b_heart_list = data2Model_HeartRate(cmdValue);
                 if (!locationData[Prot_const.Data_0x40]) {
                     locationData[Prot_const.Data_0x40] = ev07b_heart_list;
-                } else {// 支持多个key累加一起（修改时间：2021-06-24）
+                } else {// Support multiple keys accumulated together (modified on: 2021-06-24)
                     locationData[Prot_const.Data_0x40].concat(ev07b_heart_list)
                 }
                 break;
@@ -531,7 +531,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 let ev07b_spo2_list = data2Model_SPO2List(cmdValue);
                 if (!locationData[Prot_const.Data_0x41]) {
                     locationData[Prot_const.Data_0x41] = ev07b_spo2_list;
-                } else {// 支持多个key累加一起（修改时间：2021-06-24）
+                } else {// Support multiple keys accumulated together (modified on: 2021-06-24)
                     locationData[Prot_const.Data_0x41].concat(ev07b_spo2_list);
                 }
                 break;
@@ -544,7 +544,7 @@ function analysisLocationData(cmd_Model: CMD_Model) {
                 locationData[Prot_const.Data_0x34] = beaconList2
                 break;
             case Cmd_const.CMD_Data_LogRecord:
-                // 日志记录列表改为解析时动态创建（修改时间：2021-06-24）
+                // Log record list changed to be dynamically created during parsing (modified on: 2021-06-24)
                 if (!locationData[Prot_const.Log_list]) {
                     locationData[Prot_const.Log_list] = []
                 }
@@ -569,43 +569,43 @@ function analysisLocationData(cmd_Model: CMD_Model) {
     return locationData;
 }
 
-// 解析配置数据
+// Parse configuration data
 function data2Model_Status(data: number[]) {
     let map_status: any = {};
     let val = data.slice(0, 4);
     let dateTime = ProtocolUtil.bytes2DateTime(val);
     let status = data.slice(4, 8);
     let statusCode = ProtocolUtil.bytes2Long(status);
-    map_status[Prot_const.Data_0x24_StatusCode] = statusCode;// 这个在新版中是否去掉了
+    map_status[Prot_const.Data_0x24_StatusCode] = statusCode;// Has this been removed in the new version?
     map_status[Prot_const.Data_0x24_DeviceStatus] = getDeviceStatus(status);
     map_status[Prot_const.Data_0x24_DateTime] = new Date(dateTime.getTime());
     map_status[Prot_const.Data_0x24_DateTime] = new Date(dateTime.getTime());
     return map_status;
 }
 
-// 获取设备的状态
+// Get device status
 function getDeviceStatus(status: number[]) {
     const flag = status[0] & 0xFF;
     const flag_1 = status[1] & 0xFF;
     const isGPS = ProtocolUtil.getBit(flag, 0, 1) > 0;//GPS
     const isWIFI = ProtocolUtil.getBit(flag, 1, 2) > 0;//WIFI
     const isGMS = ProtocolUtil.getBit(flag, 2, 3) > 0;//GMS
-    const isBLE = ProtocolUtil.getBit(flag, 3, 4) > 0;//蓝牙
-    const isCharging = ProtocolUtil.getBit(flag, 4, 5) > 0;//充电状态
-    const isChargingComplete = ProtocolUtil.getBit(flag, 5, 6) > 0;//充电完成
-    const isReboot = ProtocolUtil.getBit(flag, 6, 7) > 0;//是否第一条数据
-    const isHistoricalData = ProtocolUtil.getBit(flag, 7, 8) > 0;//是否历史数据
-    const isAGPS = ProtocolUtil.getBit(flag_1, 0, 1) > 0;//是否辅助定位
-    const isMotion = ProtocolUtil.getBit(flag_1, 1, 2) > 0;//是否运动(活跃)
-    const isSmart = ProtocolUtil.getBit(flag_1, 2, 3) > 0;//是否智能定位
-    const isBeacon = ProtocolUtil.getBit(flag_1, 3, 4) > 0;//是否Beacon定位
+    const isBLE = ProtocolUtil.getBit(flag, 3, 4) > 0;//Bluetooth
+    const isCharging = ProtocolUtil.getBit(flag, 4, 5) > 0;//Charging status
+    const isChargingComplete = ProtocolUtil.getBit(flag, 5, 6) > 0;//Charging complete
+    const isReboot = ProtocolUtil.getBit(flag, 6, 7) > 0;//Is it the first data
+    const isHistoricalData = ProtocolUtil.getBit(flag, 7, 8) > 0;//Is it historical data
+    const isAGPS = ProtocolUtil.getBit(flag_1, 0, 1) > 0;//Is it assisted positioning
+    const isMotion = ProtocolUtil.getBit(flag_1, 1, 2) > 0;//Is it moving (active)
+    const isSmart = ProtocolUtil.getBit(flag_1, 2, 3) > 0;//Is it smart positioning
+    const isBeacon = ProtocolUtil.getBit(flag_1, 3, 4) > 0;//Is it Beacon positioning
     const bleConnected = ProtocolUtil.getBit(flag_1, 4, 5) > 0;//BLE Connected
     const fallDownStatus = ProtocolUtil.getBit(flag_1, 5, 6);//Fall down allow on status
-    const isHomeWifi = ProtocolUtil.getBit(flag_1, 6, 7) > 0;//是否HomeWifi定位
-    const isHome = ProtocolUtil.getBit(flag_1, 7, 8) > 0;//是否在家
-    const workMode = ProtocolUtil.getBit(status[2], 0, 3);//工作模式
-    const signalSize = ProtocolUtil.getBit(status[2], 3, 8);//信号强度
-    const battery = status[3] & 0xFF;//电池电量
+    const isHomeWifi = ProtocolUtil.getBit(flag_1, 6, 7) > 0;//Is it HomeWifi positioning
+    const isHome = ProtocolUtil.getBit(flag_1, 7, 8) > 0;//Is it at home
+    const workMode = ProtocolUtil.getBit(status[2], 0, 3);//Work mode
+    const signalSize = ProtocolUtil.getBit(status[2], 3, 8);//Signal strength
+    const battery = status[3] & 0xFF;//Battery level
     let deviceStatus: any = {};
     if (isBLE) {
         deviceStatus[Prot_const.Data_0x24_DataType] = Prot_const.Data_DataType_BLE
@@ -639,7 +639,7 @@ function getDeviceStatus(status: number[]) {
     return deviceStatus;
 }
 
-// 解析gps定位
+// Parse gps positioning
 function data2Model_GPS(data: number[]) {
     let map: any = {};
     let lat = ProtocolUtil.bytes2Latlng(data.slice(0, 4));
@@ -647,7 +647,7 @@ function data2Model_GPS(data: number[]) {
     let speed = (data[8] & 0xFF) | (data[9] & 0xFF) << 8;
     let direction = (data[10] & 0xFF) | (data[11] & 0xFF) << 8;
     //int altitude = (data[12] & 0xFF) | (data[13] & 0xFF) << 8;
-    // 支持负数
+    // Support negative numbers
     let altitude = ProtocolUtil.bytes2Long(data.slice(12, 14), true);
     let precision = (data[14] & 0xFF) | (data[15] & 0xFF) << 8;
     let mileage = ProtocolUtil.bytes2Long(data.slice(16, 20));
@@ -663,7 +663,7 @@ function data2Model_GPS(data: number[]) {
     return map;
 }
 
-// 解析GSM定位
+// Parse GSM positioning
 function data2Model_GSM(data: number[], key: number) {
     const map_gsm: any = {};
     if (key == Cmd_const.CMD_Data_GSM) {
@@ -746,7 +746,7 @@ function getJson_GSM3(data: number[]) {
     return list;
 }
 
-// 解析wifi定位
+// Parse wifi positioning
 function data2Model_Wifi(data: number[], key: number) {
     const map_wifi: any = {};
     let wifiList = null;
@@ -790,9 +790,9 @@ function getJson_Wifi2(data: number[]) {
     return list;
 }
 
-// 解析蓝牙
+// Parse bluetooth
 function data2Model_BLE(data: number[]) {
-    if (data.length > 1) {//过滤ble定位请求，只有key没有value。
+    if (data.length > 1) {//Filter ble positioning request, only key no value.
         const map_ble: any = {};
         const mac = ProtocolUtil.bytes2Mac(data.slice(0, 6), false);
         const lat = ProtocolUtil.bytes2Latlng(data.slice(6, 10));
@@ -842,8 +842,8 @@ function data2Model_Beacon(data: number[]) {
     const flag = (data[0] & 0xFF);
     const beacon_index = ProtocolUtil.getBit(flag, 0, 4);
     const mac = ProtocolUtil.bytes2Mac(data.slice(1, 7), false);
-    const rssi = data[7];//带符号不用 & 0xFF
-    const rssi_1m = data[8];//带符号不用 & 0xFF
+    const rssi = data[7];//With sign, no & 0xFF
+    const rssi_1m = data[8];//With sign, no & 0xFF
     map_beacon[Prot_const.CMD_Body_Index] = beacon_index;
     map_beacon[Prot_const.Data_0x28_Mac] = mac;
     map_beacon[Prot_const.Data_0x28_Rssi] = rssi;
@@ -870,8 +870,8 @@ function data2Model_Beacon2(data: number[]) {
     const flag = (data[0] & 0xFF);
     const beacon_index = ProtocolUtil.getBit(flag, 0, 4);
     const mac = ProtocolUtil.bytes2Mac(data.slice(1, 7), false);
-    const rssi = data[7];//带符号不用 & 0xFF
-    const rssi_1m = data[8];//带符号不用 & 0xFF
+    const rssi = data[7];//With sign, no & 0xFF
+    const rssi_1m = data[8];//With sign, no & 0xFF
     const battery = data[9] & 0xFF;
     map_beacon[Prot_const.CMD_Body_Index] = beacon_index;
     map_beacon[Prot_const.Data_0x28_Mac] = mac;
@@ -900,7 +900,7 @@ function data2Model_HomeWifi(data: number[]) {
     const flag = (data[0] & 0xFF);
     const homeWifi_index = (flag & 0x0F);
     const mac = ProtocolUtil.bytes2Mac(data.slice(1, 7), false);
-    let rssi = data[7];//带符号不用 & 0xFF
+    let rssi = data[7];//With sign, no & 0xFF
     map_homeWifi[Prot_const.Data_0x2A_Mac] = mac
     map_homeWifi[Prot_const.Data_0x2A_Rssi] = rssi
     map_homeWifi[Prot_const.CMD_Body_Index] = homeWifi_index
@@ -921,7 +921,7 @@ function data2Model_HomeWifi(data: number[]) {
     return map_homeWifi;
 }
 
-// 解析报警状态
+// Parse alarm status
 function getAlarmStatus(alarmFlag: number[]) {
     const alarmStatus: any = {};
     alarmStatus[Prot_const.CMD_Value_FLAG] = alarmFlag
@@ -955,7 +955,7 @@ function getAlarmStatus(alarmFlag: number[]) {
     alarmStatus[Prot_const.Data_0x02_Upload] = ProtocolUtil.getBit(alarmFlag, 23, 24);
     alarmStatus[Prot_const.Data_0x02_HomeFenceOut] = ProtocolUtil.getBit(alarmFlag, 24, 25);
     alarmStatus[Prot_const.Data_0x02_HomeFenceIn] = ProtocolUtil.getBit(alarmFlag, 25, 26);
-    // GEO报警的进/出状态位
+    // GEO alarm in/out status bit
     alarmStatus[Prot_const.Data_0x02_Geo1_In] = ProtocolUtil.getBit(alarmFlag, 26, 27);
     alarmStatus[Prot_const.Data_0x02_Geo2_In] = ProtocolUtil.getBit(alarmFlag, 27, 28);
     alarmStatus[Prot_const.Data_0x02_Geo3_In] = ProtocolUtil.getBit(alarmFlag, 28, 29);
@@ -966,7 +966,7 @@ function getAlarmStatus(alarmFlag: number[]) {
 
 function getAlarmStatusExtend(alarmFlag: number[]) {
     const alarmExtendStatus: any = {};
-    alarmExtendStatus[Prot_const.CMD_Value_FLAG] = alarmFlag;//新增保留值
+    alarmExtendStatus[Prot_const.CMD_Value_FLAG] = alarmFlag;//New reserved value
     alarmExtendStatus[Prot_const.Data_0x02_FallOff] = ProtocolUtil.getBit(alarmFlag, 0, 1);
     return alarmExtendStatus;
 }

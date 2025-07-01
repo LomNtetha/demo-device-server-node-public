@@ -1,5 +1,5 @@
 module.exports = class {
-    // 将字节转换成字符串
+    // Convert bytes to string
     public static bytesToHexString(byteArray: any[], isOrder: boolean): string {
         let str = ""
         if (byteArray == null || byteArray.length <= 0) {
@@ -50,7 +50,7 @@ module.exports = class {
         // return
     }
 
-    // 将十六进制转换成单个字节数组
+    // Convert hexadecimal to a single byte array
     public static hexStringToBytes(hexString: string, isOrder: boolean): any {
         if (!hexString) return
         hexString = hexString.replaceAll(" ", "");

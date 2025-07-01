@@ -11,7 +11,7 @@ exports.logger = function (level: any) {
     return logger;
 };
 export {};
-// 配合 express 使用的方法
+// Method used in conjunction with Express
 // exports.use = function (app, level) {
 //     app.use(log4js.connectLogger(log4js.getLogger('logInfo'), {
 //         level: levels[level] || levels['debug'],

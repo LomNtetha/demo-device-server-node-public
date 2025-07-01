@@ -1,12 +1,13 @@
 module.exports = class {
-    /**
-     * 转换为字符串<br>
-     * 如果给定的值为null，或者转换失败，返回默认值<br>
-     * 转换失败不会报错
-     * @param value        被转换的值
-     * @param defaultValue 转换错误时的默认值
-     * @return 结果
-     */
+   /**
+ * Convert to string<br>
+ * If the given value is null or the conversion fails, return the default value<br>
+ * Conversion failure will not throw an error
+ * @param value        The value to be converted
+ * @param defaultValue The default value to return if conversion fails
+ * @return Result
+ */
+
     public static toStr(value: Object, defaultValue: String) {
         if (null == value) {
             return defaultValue;
