@@ -24,6 +24,6 @@ app.use(resextra)
 app.use(function (req: any, res: { sendResult: (arg0: null, arg1: number, arg2: string) => void }, next: any) {
     res.sendResult(null, 404, 'Not Found')
 })
-app.listen(88)
+app.listen(3000)
 module.exports = app
 export {};
