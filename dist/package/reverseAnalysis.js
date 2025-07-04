@@ -1,40 +1,44 @@
-const Cmd_const = require('./cmdConst')
-const Prot_const = require('./protConst')
-const Convert = require('../utils/convert')
-const CMD_DataBody = require('./CMD_DataBody')
-const CheckCRC = require('../utils/checkCrc')
-const ProtocolUtil = require('../utils/protocolUtil')
-const logger = require('../modules/logger').logger("info")
-const BytesHexStrUtil = require('../utils/bytesHexStr')
-function reverseAnalysis(arr: Array<any>) {
-    if (!arr || arr.length <= 0) return;
-    let [{cmdHeadData, cmdBodyData}] = arr
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reverseAnalysis = void 0;
+const Cmd_const = require('./cmdConst');
+const Prot_const = require('./protConst');
+const Convert = require('../utils/convert');
+const CMD_DataBody = require('./CMD_DataBody');
+const CheckCRC = require('../utils/checkCrc');
+const ProtocolUtil = require('../utils/protocolUtil');
+const logger = require('../modules/logger').logger("info");
+const BytesHexStrUtil = require('../utils/bytesHexStr');
+function reverseAnalysis(arr) {
+    if (!arr || arr.length <= 0)
+        return;
+    let [{ cmdHeadData, cmdBodyData }] = arr;
     let cmd_bodyData = [];
     switch (cmdBodyData.cmdType) {
         case 1:
-            cmd_bodyData = getCommand_data(cmdBodyData.locationData)
+            cmd_bodyData = getCommand_data(cmdBodyData.locationData);
             break;
         case 3:
-            cmd_bodyData = getCommand_service(cmdBodyData.servicesData)
+            cmd_bodyData = getCommand_service(cmdBodyData.servicesData);
             break;
         case 4:
-            cmd_bodyData = getCommand_system(cmdBodyData.systemData)
+            cmd_bodyData = getCommand_system(cmdBodyData.systemData);
             break;
     }
-    const cmdData = getByteData(cmdHeadData,getByteData_body(cmd_bodyData));
+    const cmdData = getByteData(cmdHeadData, getByteData_body(cmd_bodyData));
     // const cmdData = getByteData_body(cmd_bodyData);
-    let str = BytesHexStrUtil.toHexString(cmdData)
-    logger.info("反向解析：", str)
+    let str = BytesHexStrUtil.toHexString(cmdData);
+    logger.info("反向解析：", str);
     return cmdData;
 }
-
-function getCommand_data(bodyData: any) {
+exports.reverseAnalysis = reverseAnalysis;
+function getCommand_data(bodyData) {
     let cmd_bodyData = new CMD_DataBody();
     cmd_bodyData.setCmdType(Cmd_const.CMD_Type_Data);
     for (let key in bodyData) {
-        let cmdValue:any[]=[];
+        let cmdValue = [];
         let cmdKey;
-        switch (key) {// 没有处理ICCID逻辑
+        switch (key) { // 没有处理ICCID逻辑
             case Prot_const.Data_0x01:
                 cmdKey = Cmd_const.CMD_Data_IMEI;
                 const imei = Convert.toStr(bodyData[key], ProtocolUtil.IMEI_DEFAULT);
@@ -100,8 +104,8 @@ function getCommand_data(bodyData: any) {
                 let statusExtend = alarmCode[Prot_const.Data_0x02_AlarmStatusExtend];
                 let statusCodeExtend = Convert.toInt(statusExtend[Prot_const.Data_0x02_FallOff], 0);
                 cmdValue = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-                cmdValue=ProtocolUtil.long2Bytes(statusCode, 4).concat(cmdValue);
-                cmdValue=cmdValue.concat(ProtocolUtil.long2Bytes(statusCodeExtend, 4));
+                cmdValue = ProtocolUtil.long2Bytes(statusCode, 4).concat(cmdValue);
+                cmdValue = cmdValue.concat(ProtocolUtil.long2Bytes(statusCodeExtend, 4));
                 cmd_bodyData.setCmdData(cmdKey, cmdValue);
                 break;
             case Prot_const.Data_0x12:
@@ -114,12 +118,12 @@ function getCommand_data(bodyData: any) {
                 break;
             case Prot_const.Data_0x14:
                 cmdKey = Cmd_const.CMD_Data_PetWalking;
-                let walkPet = bodyData[key]
+                let walkPet = bodyData[key];
                 let startTime = Convert.toStr(walkPet[Prot_const.Data_0x14_StartTime], ProtocolUtil.DATETIME_DEFAULT);
                 let stopTime = Convert.toStr(walkPet[Prot_const.Data_0x14_StopTime], ProtocolUtil.DATETIME_DEFAULT);
                 let startByte = ProtocolUtil.dateTime2Bytes(new Date(startTime));
                 let stopByte = ProtocolUtil.dateTime2Bytes(new Date(stopTime));
-                cmdValue=startByte.concat(stopByte)
+                cmdValue = startByte.concat(stopByte);
                 cmd_bodyData.setCmdData(cmdKey, cmdValue);
                 break;
             case Prot_const.Data_0x20:
@@ -246,11 +250,11 @@ function getCommand_data(bodyData: any) {
     }
     return cmd_bodyData;
 }
-function getCommand_system(bodyData: any) {
+function getCommand_system(bodyData) {
     let cmd_bodyData = new CMD_DataBody();
     cmd_bodyData.setCmdType(Cmd_const.CMD_Type_System);
     for (let key in bodyData) {
-        let cmdValue: any[] = [];
+        let cmdValue = [];
         let cmdKey;
         switch (key) {
             case Prot_const.System_0x13:
@@ -261,11 +265,11 @@ function getCommand_system(bodyData: any) {
         return cmd_bodyData;
     }
 }
-function getCommand_service(bodyData: any) {
+function getCommand_service(bodyData) {
     let cmd_bodyData = new CMD_DataBody();
     cmd_bodyData.setCmdType(Cmd_const.CMD_Type_Service);
     for (let key in bodyData) {
-        let cmdValue: any[] = [];
+        let cmdValue = [];
         let cmdKey;
         switch (key) {
             case Prot_const.Services_0x01:
@@ -276,7 +280,7 @@ function getCommand_service(bodyData: any) {
                 break;
             case Prot_const.Services_0x10:
                 cmdKey = Cmd_const.CMD_Services_HeartBeat;
-                cmdValue.push(bodyData[key])
+                cmdValue.push(bodyData[key]);
                 cmd_bodyData.setCmdData(cmdKey, cmdValue);
                 break;
             case Prot_const.Services_0x11:
@@ -287,13 +291,13 @@ function getCommand_service(bodyData: any) {
                 cmdValue = ProtocolUtil.latlng2Bytes(lat_addr, lng_addr);
                 let value = addresses[Prot_const.Services_0x11_address];
                 if (value) {
-                    let addressBytes=BytesHexStrUtil.string2BytesByUTF_8(value);
-                    cmdValue=cmdValue.concat(...addressBytes);
+                    let addressBytes = BytesHexStrUtil.string2BytesByUTF_8(value);
+                    cmdValue = cmdValue.concat(...addressBytes);
                 }
                 cmd_bodyData.setCmdData(cmdKey, cmdValue);
                 break;
             case Prot_const.Services_0x12:
-                const systemTime=bodyData[key]
+                const systemTime = bodyData[key];
                 cmdKey = Cmd_const.CMD_Services_getTimestamp;
                 if (systemTime) {
                     const dateTime = Convert.toStr(systemTime, ProtocolUtil.DATETIME_DEFAULT);
@@ -305,13 +309,13 @@ function getCommand_service(bodyData: any) {
                 cmdKey = Cmd_const.CMD_Services_getWeather;
                 let weather = bodyData[key];
                 let lang = Convert.toStr(weather[Prot_const.Services_0x13_lang], "");
-                lang = "%-8s"+lang
+                lang = "%-8s" + lang;
                 // lang = lang String.format("%-8s", lang);// 8个字节不足右边补空格
                 cmdValue = BytesHexStrUtil.string2BytesByASCII(lang);
                 if (weather[Prot_const.Services_0x13_lat] != null && weather[Prot_const.Services_0x13_lng] != null) {
                     const lat_weather = Convert.toDouble(weather[Prot_const.Services_0x13_lat], 0.0);
                     const lng_weather = Convert.toDouble(weather[Prot_const.Services_0x13_lng], 0.0);
-                    cmdValue=cmdValue.concat(ProtocolUtil.latlng2Bytes(lat_weather, lng_weather));
+                    cmdValue = cmdValue.concat(ProtocolUtil.latlng2Bytes(lat_weather, lng_weather));
                 }
                 cmd_bodyData.setCmdData(cmdKey, cmdValue);
                 break;
@@ -337,7 +341,7 @@ function getCommand_service(bodyData: any) {
         return cmd_bodyData;
     }
 }
-function mapGPS2Byte(map_gps: any): Array<any> {
+function mapGPS2Byte(map_gps) {
     const lat = Convert.toDouble(map_gps[Prot_const.Data_0x20_Lat], 0.0);
     const lng = Convert.toDouble(map_gps[Prot_const.Data_0x20_Lng], 0.0);
     const speed = Convert.toLong(map_gps[Prot_const.Data_0x20_Speed], 0);
@@ -347,57 +351,57 @@ function mapGPS2Byte(map_gps: any): Array<any> {
     const mileage = Convert.toLong(map_gps[Prot_const.Data_0x20_Mileage], 0);
     const satellites = Convert.toByte(map_gps[Prot_const.Data_0x20_Satellites], 0);
     let data_gps = ProtocolUtil.latlng2Bytes(lat, lng);
-    data_gps=data_gps.concat(ProtocolUtil.long2Bytes(speed, 2));
-    data_gps=data_gps.concat(ProtocolUtil.long2Bytes(direction, 2));
-    data_gps=data_gps.concat(ProtocolUtil.long2Bytes(altitude, 2));
-    data_gps=data_gps.concat(ProtocolUtil.long2Bytes(precision, 2));
-    data_gps=data_gps.concat(ProtocolUtil.long2Bytes(mileage, 4));
-    data_gps=data_gps.concat(satellites);
+    data_gps = data_gps.concat(ProtocolUtil.long2Bytes(speed, 2));
+    data_gps = data_gps.concat(ProtocolUtil.long2Bytes(direction, 2));
+    data_gps = data_gps.concat(ProtocolUtil.long2Bytes(altitude, 2));
+    data_gps = data_gps.concat(ProtocolUtil.long2Bytes(precision, 2));
+    data_gps = data_gps.concat(ProtocolUtil.long2Bytes(mileage, 4));
+    data_gps = data_gps.concat(satellites);
     return data_gps;
 }
-
-function mapGSM2Byte(map_gsm: any, key: number) {
+function mapGSM2Byte(map_gsm, key) {
     let gsmList = map_gsm[Prot_const.Data_0x21_GsmList];
     let mcc = 0, mnc = 0;
-    let data_gsm:any[] = [];
+    let data_gsm = [];
     for (let gsm of gsmList) {
         mcc = Convert.toInt(gsm[Prot_const.Data_0x21_Mcc], mcc);
         mnc = Convert.toInt(gsm[Prot_const.Data_0x21_Mnc], mnc);
         const cellId = Convert.toInt(gsm[Prot_const.Data_0x21_CellId], 0);
         const lac = Convert.toInt(gsm[Prot_const.Data_0x21_Lac], 0);
         const signal = Convert.toInt(gsm[Prot_const.Data_0x21_Signal], 0);
-        data_gsm=data_gsm.concat(signal);
-        data_gsm=data_gsm.concat(ProtocolUtil.long2Bytes(lac, 2));
+        data_gsm = data_gsm.concat(signal);
+        data_gsm = data_gsm.concat(ProtocolUtil.long2Bytes(lac, 2));
         if (key == Cmd_const.CMD_Data_GSM) {
-            data_gsm=data_gsm.concat(ProtocolUtil.long2Bytes(cellId, 2));
-        } else {
-            data_gsm=data_gsm.concat(ProtocolUtil.long2Bytes(cellId, 4));
+            data_gsm = data_gsm.concat(ProtocolUtil.long2Bytes(cellId, 2));
+        }
+        else {
+            data_gsm = data_gsm.concat(ProtocolUtil.long2Bytes(cellId, 4));
         }
     }
     let mcc_mnc = ProtocolUtil.long2Bytes(mcc, 2);
     if (key == Cmd_const.CMD_Data_GSM3) {
-        mcc_mnc=mcc_mnc.concat(ProtocolUtil.long2Bytes(mnc, 2));
-    } else {
-        mcc_mnc=mcc_mnc.concat((mnc & 0xFF));
+        mcc_mnc = mcc_mnc.concat(ProtocolUtil.long2Bytes(mnc, 2));
+    }
+    else {
+        mcc_mnc = mcc_mnc.concat((mnc & 0xFF));
     }
     return mcc_mnc.concat(data_gsm);
 }
-
-function mapWifi2Byte(map_wifi: any) {
-    let data_wifi: string[] = [];
+function mapWifi2Byte(map_wifi) {
+    let data_wifi = [];
     let wifiList = map_wifi[Prot_const.Data_0x22_WifiList];
     for (let wifi of wifiList) {
         const signal = Convert.toInt(wifi[Prot_const.Data_0x22_Signal], 0);
         const mac = Convert.toStr(wifi[Prot_const.Data_0x22_Mac], ProtocolUtil.MAC_DEFAULT);
-        data_wifi=data_wifi.concat(ProtocolUtil.minusToHex(signal,8));
-        data_wifi=data_wifi.concat(ProtocolUtil.mac2Bytes(mac, true));
+        data_wifi = data_wifi.concat(ProtocolUtil.minusToHex(signal, 8));
+        data_wifi = data_wifi.concat(ProtocolUtil.mac2Bytes(mac, true));
         const name = Convert.toStr(wifi[Prot_const.Data_0x22_Name]);
-        if (name != null||name!=undefined) {
-            console.log("389",name.length.toString(2))
+        if (name != null || name != undefined) {
+            console.log("389", name.length.toString(2));
             // @ts-ignore
-            let val=new TextEncoder().encode(name)
-            console.log("389",val)
-            data_wifi=data_wifi.concat(name.length);
+            let val = new TextEncoder().encode(name);
+            console.log("389", val);
+            data_wifi = data_wifi.concat(name.length);
             // @ts-ignore
             data_wifi = data_wifi.concat([...val]);
             // data_wifi = data_wifi.concat(BytesHexStrUtil.string2BytesByUTF_8(name));
@@ -405,35 +409,32 @@ function mapWifi2Byte(map_wifi: any) {
     }
     return data_wifi;
 }
-
-function mapBLE2Byte(map_ble: any) {
+function mapBLE2Byte(map_ble) {
     let mac = Convert.toStr(map_ble[Prot_const.Data_0x23_Mac], ProtocolUtil.MAC_DEFAULT);
     let lat = Convert.toDouble(map_ble[Prot_const.Data_0x23_Lat], 0.0);
     let lng = Convert.toDouble(map_ble[Prot_const.Data_0x23_Lng], 0.0);
     let data_ble = ProtocolUtil.mac2Bytes(mac, false);
-    data_ble=data_ble.concat(ProtocolUtil.latlng2Bytes(lat, lng));
+    data_ble = data_ble.concat(ProtocolUtil.latlng2Bytes(lat, lng));
     let describe = Convert.toStr(map_ble[Prot_const.Data_0x23_Describe]);
     if (describe != null) {
-        let val=new TextEncoder().encode(describe)
-        data_ble=data_ble.concat([...val]);
+        let val = new TextEncoder().encode(describe);
+        data_ble = data_ble.concat([...val]);
     }
     return data_ble;
 }
-
-function mapBLE2Byte2(map_ble2: any) {
+function mapBLE2Byte2(map_ble2) {
     const mac = Convert.toStr(map_ble2[Prot_const.Data_0x23_Mac], ProtocolUtil.MAC_DEFAULT);
     const lat = Convert.toDouble(map_ble2[Prot_const.Data_0x23_Lat], 0.0);
     const lng = Convert.toDouble(map_ble2[Prot_const.Data_0x23_Lng], 0.0);
     const radius = Convert.toLong(map_ble2[Prot_const.Data_0x23_Radius], 0);
     const height = Convert.toLong(map_ble2[Prot_const.Data_0x23_Height], 0);
     let data_ble2 = ProtocolUtil.mac2Bytes(mac, false);
-    data_ble2=data_ble2.concat(ProtocolUtil.latlng2Bytes(lat, lng));
-    data_ble2=data_ble2.concat(ProtocolUtil.long2Bytes(radius * 10, 2));
-    data_ble2=data_ble2.concat(ProtocolUtil.long2Bytes(height, 2));
+    data_ble2 = data_ble2.concat(ProtocolUtil.latlng2Bytes(lat, lng));
+    data_ble2 = data_ble2.concat(ProtocolUtil.long2Bytes(radius * 10, 2));
+    data_ble2 = data_ble2.concat(ProtocolUtil.long2Bytes(height, 2));
     return data_ble2;
 }
-
-function mapStatus2Byte(map_status: any) {
+function mapStatus2Byte(map_status) {
     const dateTime = Convert.toStr(map_status[Prot_const.Data_0x24_DateTime], ProtocolUtil.DATETIME_DEFAULT);
     const deviceStatus = map_status[Prot_const.Data_0x24_DeviceStatus];
     let deviceStatusCode = Convert.toInt(deviceStatus[Prot_const.Data_0x24_IsGPS], 0);
@@ -459,9 +460,8 @@ function mapStatus2Byte(map_status: any) {
     data_status = data_status.concat(ProtocolUtil.long2Bytes(deviceStatusCode, 4));
     return data_status;
 }
-
-function mapCALL2Byte(callList: any) {
-    let data_call: number[] = [];
+function mapCALL2Byte(callList) {
+    let data_call = [];
     for (let call of callList) {
         const dateTime = Convert.toStr(call[Prot_const.Data_0x25_DateTime], ProtocolUtil.DATETIME_DEFAULT);
         const number = Convert.toStr(call[Prot_const.Data_0x25_Number], "");
@@ -472,27 +472,25 @@ function mapCALL2Byte(callList: any) {
         const callType = Convert.toByte(call[Prot_const.Data_0x25_CallType], 0);
         const flag = callInOut | (callStatus << 1) | (callType << 4);
         const dataTime = new Date(dateTime);
-        data_call=data_call.concat(ProtocolUtil.dateTime2Bytes(dataTime));
-        data_call=data_call.concat(flag);
-        data_call=data_call.concat(ProtocolUtil.long2Bytes(time, 2));
-        data_call=data_call.concat(retCode);
-        data_call=data_call.concat(BytesHexStrUtil.string2BytesByASCII(number));
+        data_call = data_call.concat(ProtocolUtil.dateTime2Bytes(dataTime));
+        data_call = data_call.concat(flag);
+        data_call = data_call.concat(ProtocolUtil.long2Bytes(time, 2));
+        data_call = data_call.concat(retCode);
+        data_call = data_call.concat(BytesHexStrUtil.string2BytesByASCII(number));
     }
     return data_call;
 }
-
-function mapSmart2Byte(map_smart: any) {
+function mapSmart2Byte(map_smart) {
     const lat = Convert.toDouble(map_smart[Prot_const.Data_0x27_Lat], 0.0);
     const lng = Convert.toDouble(map_smart[Prot_const.Data_0x27_Lng], 0.0);
     const radius = Convert.toLong(map_smart[Prot_const.Data_0x27_Radius], 0);
     const height = Convert.toLong(map_smart[Prot_const.Data_0x27_Height], 0);
     let data_smart = ProtocolUtil.latlng2Bytes(lat, lng);
-    data_smart =data_smart.concat(ProtocolUtil.long2Bytes(radius, 2));
-    data_smart =data_smart.concat(ProtocolUtil.long2Bytes(height, 2));
+    data_smart = data_smart.concat(ProtocolUtil.long2Bytes(radius, 2));
+    data_smart = data_smart.concat(ProtocolUtil.long2Bytes(height, 2));
     return data_smart;
 }
-
-function mapBeacon2Byte(map_beacon: any, key: number) {// 最后来调整，需要将字符串转换为UTF_8
+function mapBeacon2Byte(map_beacon, key) {
     const index = Convert.toInt(map_beacon[Prot_const.CMD_Body_Index], 0);
     const mac = Convert.toStr(map_beacon[Prot_const.Data_0x28_Mac], ProtocolUtil.MAC_DEFAULT);
     let rssi = Convert.toByte(map_beacon[Prot_const.Data_0x28_Rssi], 0);
@@ -501,31 +499,30 @@ function mapBeacon2Byte(map_beacon: any, key: number) {// 最后来调整，需�
     const lat = Convert.toDouble(map_beacon[Prot_const.Data_0x28_Lat], 0.0);
     const lng = Convert.toDouble(map_beacon[Prot_const.Data_0x28_Lng], 0.0);
     const isDescribe = Convert.toInt(map_beacon[Prot_const.Data_0x28_IsDescribe], 0);
-    rssi=ProtocolUtil.minusToHex(rssi,8)
-    rssi_1m=ProtocolUtil.minusToHex(rssi_1m,8)
-    let val=new TextEncoder().encode(map_beacon[Prot_const.Data_0x28_Describe])
+    rssi = ProtocolUtil.minusToHex(rssi, 8);
+    rssi_1m = ProtocolUtil.minusToHex(rssi_1m, 8);
+    let val = new TextEncoder().encode(map_beacon[Prot_const.Data_0x28_Describe]);
     // @ts-ignore
     // const describe = Convert.utf8Str(map_beacon[Prot_const.Data_0x28_Describe]);
     const describe = [...val];
     const flag = index | (isDescribe << 6) | (isLanLng << 7);
     let data_beacon = [flag];
-    data_beacon =data_beacon.concat(ProtocolUtil.mac2Bytes(mac, false));
-    data_beacon =data_beacon.concat(rssi,rssi_1m);
+    data_beacon = data_beacon.concat(ProtocolUtil.mac2Bytes(mac, false));
+    data_beacon = data_beacon.concat(rssi, rssi_1m);
     if (key == Cmd_const.CMD_Data_Beacon2) {
         const battery = Convert.toByte(map_beacon[Prot_const.Data_0x28_Battery], 0);
-        data_beacon =data_beacon.concat(battery);
+        data_beacon = data_beacon.concat(battery);
     }
     if (isLanLng == 1) {
-        data_beacon =data_beacon.concat(ProtocolUtil.latlng2Bytes(lat, lng));
+        data_beacon = data_beacon.concat(ProtocolUtil.latlng2Bytes(lat, lng));
     }
     if (isDescribe == 1) {
         // @ts-ignore
-        data_beacon =data_beacon.concat(describe);
+        data_beacon = data_beacon.concat(describe);
     }
     return data_beacon;
 }
-
-function mapHomeWifi2Byte(map_homeWifi: any) {
+function mapHomeWifi2Byte(map_homeWifi) {
     const index = Convert.toInt(map_homeWifi[Prot_const.CMD_Body_Index], 0);
     const mac = Convert.toStr(map_homeWifi[Prot_const.Data_0x2A_Mac], ProtocolUtil.MAC_DEFAULT);
     const rssi = Convert.toByte(map_homeWifi[Prot_const.Data_0x2A_Rssi], 0);
@@ -535,116 +532,109 @@ function mapHomeWifi2Byte(map_homeWifi: any) {
     const isDescribe = Convert.toInt(map_homeWifi[Prot_const.Data_0x2A_IsDescribe], 0);
     const describe = Convert.utf8Str(map_homeWifi[Prot_const.Data_0x2A_Describe]);
     const flag = index | (isDescribe << 6) | (isLanLng << 7);
-    let data_homeWifi = [{flag}];
-    data_homeWifi =data_homeWifi.concat(ProtocolUtil.mac2Bytes(mac, false));
-    data_homeWifi =data_homeWifi.concat(rssi);
+    let data_homeWifi = [{ flag }];
+    data_homeWifi = data_homeWifi.concat(ProtocolUtil.mac2Bytes(mac, false));
+    data_homeWifi = data_homeWifi.concat(rssi);
     if (isLanLng == 1) {
-        data_homeWifi =data_homeWifi.concat(ProtocolUtil.latlng2Bytes(lat, lng));
+        data_homeWifi = data_homeWifi.concat(ProtocolUtil.latlng2Bytes(lat, lng));
     }
     if (isDescribe == 1) {
-        data_homeWifi =data_homeWifi.concat(BytesHexStrUtil.string2BytesByUTF_8(describe));
+        data_homeWifi = data_homeWifi.concat(BytesHexStrUtil.string2BytesByUTF_8(describe));
     }
     return data_homeWifi;
 }
-
-function mapStep2Byte(stepList: any) {
-    let data_step: string [] = [];
+function mapStep2Byte(stepList) {
+    let data_step = [];
     for (let step of stepList) {
         const dateTime = Convert.toStr(step[Prot_const.Data_0x30_DateTime], ProtocolUtil.DATETIME_DEFAULT);
         const stepNo = Convert.toInt(step[Prot_const.Data_0x30_Step], 0);
         //data_step = ProtocolUtil.dateTime2Bytes(new Date(dateTime.replace("-", "/")));
         let stepBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-        data_step=data_step.concat(stepBytes);
-        data_step=data_step.concat(ProtocolUtil.long2Bytes(stepNo, 4));
+        data_step = data_step.concat(stepBytes);
+        data_step = data_step.concat(ProtocolUtil.long2Bytes(stepNo, 4));
     }
     return data_step;
 }
-
-function mapActive2Byte(activeList: any) {
-    let data_active: string[] = [];
+function mapActive2Byte(activeList) {
+    let data_active = [];
     for (let active of activeList) {
         const dateTime = Convert.toStr(active[Prot_const.Data_0x31_DateTime], ProtocolUtil.DATETIME_DEFAULT);
         const activeNo = Convert.toInt(active[Prot_const.Data_0x31_Active], 0);
         const activeBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-        data_active=data_active.concat(activeBytes);
-        data_active=data_active.concat(ProtocolUtil.long2Bytes(activeNo, 4));
+        data_active = data_active.concat(activeBytes);
+        data_active = data_active.concat(ProtocolUtil.long2Bytes(activeNo, 4));
     }
     return data_active;
 }
-
-function mapBeaconList2Byte(beaconList: any) {
+function mapBeaconList2Byte(beaconList) {
     const dateTime = Convert.toStr(beaconList[Prot_const.Data_0x33_DateTime], ProtocolUtil.DATETIME_DEFAULT);
     const companyId = Convert.toLong(beaconList[Prot_const.Data_0x33_CompanyId]);
     let uuid = Convert.toStr(beaconList[Prot_const.Data_0x33_UUID]);
     uuid = ProtocolUtil.strAfterFillZero(uuid, 32);
     let beaconListBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-    beaconListBytes=beaconListBytes.concat(ProtocolUtil.long2Bytes(companyId, 2));
-    beaconListBytes=beaconListBytes.concat(BytesHexStrUtil.hexStringToBytes(uuid,true));
-    let listByte: any[] = [];
+    beaconListBytes = beaconListBytes.concat(ProtocolUtil.long2Bytes(companyId, 2));
+    beaconListBytes = beaconListBytes.concat(BytesHexStrUtil.hexStringToBytes(uuid, true));
+    let listByte = [];
     let list = beaconList[Prot_const.Data_0x33_List];
-    list.forEach((heartRate: any) => {
+    list.forEach((heartRate) => {
         const major = Convert.toInt(heartRate[Prot_const.Data_0x33_Major]);
         const minor = Convert.toInt(heartRate[Prot_const.Data_0x33_Minor]);
         const rssi_m = Convert.toByte(heartRate[Prot_const.Data_0x33_Rssi_m], 0);
         const rssi_r = Convert.toByte(heartRate[Prot_const.Data_0x33_Rssi_r], 0);
-        listByte=listByte.concat(ProtocolUtil.long2Bytes(major, 2));
-        listByte=listByte.concat(ProtocolUtil.long2Bytes(minor, 2));
-        listByte=listByte.concat(rssi_m, rssi_r);
-    })
-    beaconListBytes=beaconListBytes.concat(listByte);
+        listByte = listByte.concat(ProtocolUtil.long2Bytes(major, 2));
+        listByte = listByte.concat(ProtocolUtil.long2Bytes(minor, 2));
+        listByte = listByte.concat(rssi_m, rssi_r);
+    });
+    beaconListBytes = beaconListBytes.concat(listByte);
     return beaconListBytes;
 }
-
-function mapBeaconList2Byte2(beaconList: any) {
+function mapBeaconList2Byte2(beaconList) {
     const dateTime = Convert.toStr(beaconList[Prot_const.Data_0x33_DateTime], ProtocolUtil.DATETIME_DEFAULT);
     const companyId = Convert.toLong(beaconList[Prot_const.Data_0x33_CompanyId]);
     let beaconListBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
     beaconListBytes = beaconListBytes.concat(ProtocolUtil.long2Bytes(companyId, 2));
-    let listByte: any[] = [];
+    let listByte = [];
     let list = beaconList[Prot_const.Data_0x33_List];
-    list.forEach((heartRate: any) => {
+    list.forEach((heartRate) => {
         let uuid = Convert.toStr(heartRate[Prot_const.Data_0x33_UUID]);
         uuid = ProtocolUtil.strAfterFillZero(uuid, 32);
         const major = Convert.toInt(heartRate[Prot_const.Data_0x33_Major]);
         const minor = Convert.toInt(heartRate[Prot_const.Data_0x33_Minor]);
         const rssi_m = Convert.toByte(heartRate[Prot_const.Data_0x33_Rssi_m], 0);
         const rssi_r = Convert.toByte(heartRate[Prot_const.Data_0x33_Rssi_r], 0);
-        listByte=listByte.concat(BytesHexStrUtil.hexStringToBytes(uuid,true));
-        listByte=listByte.concat(ProtocolUtil.long2Bytes(major, 2));
-        listByte=listByte.concat(ProtocolUtil.long2Bytes(minor, 2));
-        listByte=listByte.concat(rssi_m, rssi_r);
-    })
-    beaconListBytes=beaconListBytes.concat(listByte);
+        listByte = listByte.concat(BytesHexStrUtil.hexStringToBytes(uuid, true));
+        listByte = listByte.concat(ProtocolUtil.long2Bytes(major, 2));
+        listByte = listByte.concat(ProtocolUtil.long2Bytes(minor, 2));
+        listByte = listByte.concat(rssi_m, rssi_r);
+    });
+    beaconListBytes = beaconListBytes.concat(listByte);
     return beaconListBytes;
 }
-
-function mapHeartRate2Byte(heartRateList: any) {
-    let data_heartRate: any[] = [];
+function mapHeartRate2Byte(heartRateList) {
+    let data_heartRate = [];
     for (let heartRate of heartRateList) {
         const dateTime = Convert.toStr(heartRate[Prot_const.Data_0x40_DateTime], ProtocolUtil.DATETIME_DEFAULT);
         const heartRateNo = Convert.toByte(heartRate[Prot_const.Data_0x40_HeartRate], 0);
         const trustLevel = Convert.toByte(heartRate[Prot_const.Data_0x40_TrustLevel], 0);
         const heartRateBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-        data_heartRate=data_heartRate.concat(heartRateBytes);
-        data_heartRate=data_heartRate.concat(heartRateNo, trustLevel);
+        data_heartRate = data_heartRate.concat(heartRateBytes);
+        data_heartRate = data_heartRate.concat(heartRateNo, trustLevel);
     }
     return data_heartRate;
 }
-
-function mapSPO2Rate2Byte(spo2RateList: any) {
-    let data_spo2Rate: any[] = [];
+function mapSPO2Rate2Byte(spo2RateList) {
+    let data_spo2Rate = [];
     for (let spo2Rate of spo2RateList) {
         const dateTime = Convert.toStr(spo2Rate[Prot_const.Data_0x41_DateTime], ProtocolUtil.DATETIME_DEFAULT);
-        const spo2RateNo = Convert.toByte(spo2Rate[Prot_const.Data_0x41_SPO2Rate], 0)
+        const spo2RateNo = Convert.toByte(spo2Rate[Prot_const.Data_0x41_SPO2Rate], 0);
         const trustLevel = Convert.toByte(spo2Rate[Prot_const.Data_0x41_TrustLevel], 0);
         const spo2RateBytes = ProtocolUtil.dateTime2Bytes(new Date(dateTime));
-        data_spo2Rate=data_spo2Rate.concat(spo2RateBytes);
-        data_spo2Rate=data_spo2Rate.concat(spo2RateNo, trustLevel);
+        data_spo2Rate = data_spo2Rate.concat(spo2RateBytes);
+        data_spo2Rate = data_spo2Rate.concat(spo2RateNo, trustLevel);
     }
     return data_spo2Rate;
 }
-
-function getByteData(cmd_head: any, bodyData: any) {
+function getByteData(cmd_head, bodyData) {
     const headData = new Array(8);
     headData[0] = Cmd_const.CMD_Head;
     const version = cmd_head[Prot_const.CMD_Head_Version];
@@ -664,23 +654,18 @@ function getByteData(cmd_head: any, bodyData: any) {
     headData[7] = (sequenceId >> 8 & 0xFF);
     return headData.concat(bodyData);
 }
-
-function getByteData_body(cmd_bodyData: any) {
-    let cmd_bodyByte: number[] = [];
+function getByteData_body(cmd_bodyData) {
+    let cmd_bodyByte = [];
     const cmdType = cmd_bodyData[Prot_const.CMD_Body_CmdType];
     cmdType && cmd_bodyByte.push(cmdType);
     const cmdList = cmd_bodyData["cmdData"];
-    cmdList.forEach((cmd: any) => {
+    cmdList.forEach((cmd) => {
         const cmdLength = cmd["cmdLength"];
         cmd_bodyByte.push(cmdLength);
         const cmdKey = cmd[Prot_const.CMD_Body_CmdKey];
         cmd_bodyByte.push(cmdKey);
         let cmdValue = cmd["cmdValue"] || [];
-        cmd_bodyByte = cmd_bodyByte.concat(cmdValue)
-    })
+        cmd_bodyByte = cmd_bodyByte.concat(cmdValue);
+    });
     return cmd_bodyByte;
 }
-export {reverseAnalysis}
-
-
-

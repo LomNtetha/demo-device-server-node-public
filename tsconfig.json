@@ -11,7 +11,17 @@
       "dom"
     ],
     "suppressImplicitAnyIndexErrors": true,
-    "ignoreDeprecations":"5.0"
+    "ignoreDeprecations": "5.0"
   },
+  "include": [
+    "types",
+    "*.ts",
+    "services/**/*.ts",
+    "modules/**/*.ts",
+    "utils/**/*.ts",
+    "package/**/*.ts",
+    "demos/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
+

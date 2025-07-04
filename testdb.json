@@ -1,0 +1,37 @@
+[
+  {
+    "cmdHeadData": {
+      "sequenceId": 710,
+      "length": 35,
+      "checkCRC": 39485,
+      "version": 0,
+      "flagACK": true
+    },
+    "cmdBodyData": {
+      "cmdType": 3,
+      "servicesData": {
+        "imei": "863957072396309",
+        "heartBeat": 90,
+        "status": {
+          "statusCode": 885392128,
+          "deviceStatus": {
+            "isCharging": false,
+            "isChargingComplete": false,
+            "isHistoricalData": false,
+            "isReboot": false,
+            "isAGPS": true,
+            "isMotion": true,
+            "workMode": 6,
+            "signalSize": 24,
+            "battery": 52,
+            "isHome": false,
+            "bleConnected": false,
+            "fallDownStatus": 0
+          },
+          "dateTime": "2025-07-04T06:42:39.000Z"
+        }
+      }
+    },
+    "originalData": "AB 10 23 00 3D 9A C6 02 03 10 01 38 36 33 39 35 37 30 37 32 33 39 36 33 30 39 02 10 5A 0D 24 DF 77 67 68 00 03 C6 34 03 00 00 00"
+  }
+]

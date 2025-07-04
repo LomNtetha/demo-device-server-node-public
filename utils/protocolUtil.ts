@@ -1,5 +1,5 @@
 // @ts-ignore
-const BytesHexStrUtil = require('./bytesHexStr.ts')
+const BytesHexStrUtil = require('./bytesHexStr')
 const Decimal = require('decimal.js');
 module.exports = class {
     public static IMEI_DEFAULT = "000000000000000";
