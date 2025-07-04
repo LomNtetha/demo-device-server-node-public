@@ -8,3 +8,4 @@ tmp_uploads/
 uploads/
 .qodo
 .vscode
+.env
