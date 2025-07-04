@@ -4,9 +4,10 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "tsc & node .",
-    "dev": "nodemon -e js,ts,json ./app.ts"
+    "build": "rm -rf dist && npx tsc",
+    "start": "tsc && node dist/app.js",
+    "dev": "nodemon -e js,ts,json ./app.ts",
+    "refresh": "npm run build && pm2 delete 4G_panic_button-server || true && pm2 start ecosystem.config.js --only 4G_panic_button-server"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
